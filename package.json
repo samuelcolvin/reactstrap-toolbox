@@ -1,0 +1,10 @@
+{
+  "name": "reactstrap-toolbox",
+  "version": "0.0.1",
+  "description": "Tools for react and reactstrap",
+  "main": "index.js",
+  "repository": "https://github.com/samuelcolvin/reactstrap-toolbox",
+  "author": "Samuel Colvin",
+  "license": "MIT",
+  "private": false
+}
