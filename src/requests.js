@@ -46,7 +46,8 @@ function headers2obj (r) {
 }
 
 export async function request (method, app_name, path, config) {
-  let url = make_url(app_name, path)
+  const make_url_ = config.make_url || make_url
+  let url = make_url_(app_name, path)
 
   config = config || {}
   if (config.args) {

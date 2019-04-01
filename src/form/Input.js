@@ -8,7 +8,6 @@ import {
   FormFeedback,
 } from 'reactstrap'
 import {as_title} from '../index'
-import ParticipantsInput from './Participants'
 
 const Label = ({field, children}) => (
   field.show_label !== false ? (

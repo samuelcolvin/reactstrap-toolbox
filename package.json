@@ -1,10 +1,45 @@
 {
   "name": "reactstrap-toolbox",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tools for react and reactstrap",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/samuelcolvin/reactstrap-toolbox",
   "author": "Samuel Colvin",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "lint": "eslint src"
+  },
+  "keywords": [
+    "reactstrap",
+    "bootstrap",
+    "react",
+    "component",
+    "components",
+    "react-component",
+    "ui"
+  ],
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-strap": "^7.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "9.x",
+    "eslint": "^5.16.0",
+    "eslint-config-react-app": "^3.0.8",
+    "eslint-plugin-flowtype": "2.x",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4"
+  }
 }
