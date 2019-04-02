@@ -1,8 +1,10 @@
 import React from 'react'
 import {Button, ButtonGroup, Form as BootstrapForm} from 'reactstrap'
-import AsModal from '../Modal'
+import {AsModal} from '../Modal'
 import Input from './Input'
-import WithContext from '../context'
+import {WithContext} from '../context'
+
+export {Input}
 
 const DefaultRenderFields = ({fields, RenderField}) => (
   Object.values(fields).map(field => <RenderField key={field.name} field={field}/>)
@@ -106,12 +108,15 @@ class _Form extends React.Component {
     const field_value = this.props.form_data[field.name]
     const value = field_value === undefined ? (this.props.initial || {})[field.name] : field_value
     return (
-      <Input field={field}
-             value={value}
-             error={this.errors[field.name]}
-             disabled={this.state.disabled}
-             onChange={v => this.setField(field.name, v)}
-             onBlur={() => this.props.onBlur && this.props.onBlur(field.name)}/>
+      <Input
+        field={field}
+        value={value}
+        error={this.errors[field.name]}
+        disabled={this.state.disabled}
+        onChange={v => this.setField(field.name, v)}
+        type_lookup={this.props.type_lookup}
+        onBlur={() => this.props.onBlur && this.props.onBlur(field.name)}
+      />
     )
   }
 
@@ -149,9 +154,7 @@ export class StandaloneForm extends React.Component {
   }
 
   render () {
-    return <Form {...this.props}
-                 form_data={this.state.form_data}
-                 onChange={this.setFormData}/>
+    return <Form {...this.props} form_data={this.state.form_data} onChange={this.setFormData}/>
   }
 }
 export const ModalForm = AsModal(StandaloneForm)

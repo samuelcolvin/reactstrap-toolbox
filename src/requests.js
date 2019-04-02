@@ -1,7 +1,7 @@
 // TODO move to WebWorker/utils/requests.js
 import {DetailedError} from './utils'
 
-export function make_url (app_name, path) {
+export function make_url (path) {
   if (path.match(/^https?:\//)) {
     return path
   } else {
@@ -10,7 +10,7 @@ export function make_url (app_name, path) {
     }
 
     if (process.env.REACT_APP_DOMAIN === 'localhost') {
-      return `http://localhost:8000/${app_name}${path}`
+      return `http://localhost:8000/${path}`
     } else if (process.env.REACT_APP_DOMAIN) {
       return `https://${process.env.REACT_APP_DOMAIN}${path}`
     } else {
@@ -37,7 +37,7 @@ export function build_query (args) {
   return ''
 }
 
-function headers2obj (r) {
+export function headers2obj (r) {
   const h = r.headers
   const entries = Array.from(h.entries())
   if (entries.length !== 0) {
@@ -45,9 +45,9 @@ function headers2obj (r) {
   }
 }
 
-export async function request (method, app_name, path, config) {
+export async function request (method, path, config) {
   const make_url_ = config.make_url || make_url
-  let url = make_url_(app_name, path)
+  let url = make_url_(path, config)
 
   config = config || {}
   if (config.args) {

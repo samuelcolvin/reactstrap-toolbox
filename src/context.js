@@ -3,7 +3,7 @@ import {get_component_name} from './utils'
 
 export const GlobalContext = React.createContext({})
 
-export default WrappedComponent => {
+export function WithContext (WrappedComponent) {
   const WithContext = props => (
     <GlobalContext.Consumer>
       {ctx => <WrappedComponent {...props} ctx={ctx}/>}

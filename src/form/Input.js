@@ -111,15 +111,21 @@ const INPUT_LOOKUP = {
 }
 
 const Input = props => {
-  const InputComp = INPUT_LOOKUP[props.field.type] || GeneralInput
+  let InputComp = props.type_lookup && props.type_lookup[props.field.type]
+  InputComp = InputComp || INPUT_LOOKUP[props.field.type] || GeneralInput
+
   props.field.title = props.field.title || as_title(props.field.name)
   const value = [null, undefined].includes(props.value) ? props.field.default : props.value
-  return <InputComp field={props.field}
-                    error={props.error}
-                    value={value}
-                    disabled={props.disabled}
-                    onChange={props.onChange}
-                    onBlur={props.onBlur}/>
+  return (
+    <InputComp
+      field={props.field}
+      error={props.error}
+      value={value}
+      disabled={props.disabled}
+      onChange={props.onChange}
+      onBlur={props.onBlur}
+    />
+  )
 }
 
 export default Input

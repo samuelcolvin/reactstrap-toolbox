@@ -4,11 +4,10 @@ import {
   ModalHeader,
 } from 'reactstrap'
 import {withRouter} from 'react-router-dom'
-import WithContext from './context'
+import {WithContext} from './context'
 import {get_component_name} from './utils'
 
-
-export default function AsModal (WrappedComponent) {
+export function AsModal (WrappedComponent) {
   class AsModal extends React.Component {
     constructor (props) {
       super(props)
@@ -79,7 +78,8 @@ export default function AsModal (WrappedComponent) {
             modal_shown={this.state.shown}
             register_change_handler={this.register_change_handler}
             form_body_class="modal-body"
-            form_footer_class="modal-footer"/>
+            form_footer_class="modal-footer"
+          />
         </Modal>
       )
     }

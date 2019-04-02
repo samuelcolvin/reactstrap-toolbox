@@ -7,7 +7,7 @@ export const Error = ({error}) => {
     return <NotFound url={error.url}/>
   } else {
     return (
-      <div className="box">
+      <div className="error">
         <h1>Error</h1>
         <p>
           {error.status ? <span>{error.status}: </span> : ''}
@@ -19,7 +19,7 @@ export const Error = ({error}) => {
 }
 
 export const NotFound = withRouter(({url, children, location}) => (
-  <div className="box">
+  <div className="not-found">
     <h1>Page not found</h1>
     <p>The page <code>{url || location.pathname}</code> does not exist.</p>
     {children}
@@ -27,7 +27,7 @@ export const NotFound = withRouter(({url, children, location}) => (
 ))
 
 export const Loading = ({className, children}) => (
-  <div className={className || 'd-flex justify-content-center py-2'}>
+  <div className={className || 'd-flex justify-content-center py-2 loading'}>
     <Spinner color="info" />
     {children}
   </div>
