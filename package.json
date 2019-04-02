@@ -7,6 +7,7 @@
   "author": "Samuel Colvin",
   "license": "MIT",
   "private": false,
+  "sideEffects": false,
   "scripts": {
     "build": "babel src --out-dir lib",
     "lint": "eslint src"
