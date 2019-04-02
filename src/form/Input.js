@@ -7,7 +7,7 @@ import {
   FormText,
   FormFeedback,
 } from 'reactstrap'
-import {as_title} from '../index'
+import {as_title} from '../utils'
 
 const Label = ({field, children}) => (
   field.show_label !== false ? (

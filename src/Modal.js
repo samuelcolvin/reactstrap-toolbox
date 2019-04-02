@@ -5,7 +5,7 @@ import {
 } from 'reactstrap'
 import {withRouter} from 'react-router-dom'
 import WithContext from './context'
-import {get_component_name} from './index'
+import {get_component_name} from './utils'
 
 
 export default function AsModal (WrappedComponent) {

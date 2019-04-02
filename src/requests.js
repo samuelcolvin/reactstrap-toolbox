@@ -1,5 +1,5 @@
 // TODO move to WebWorker/utils/requests.js
-import {DetailedError} from './index'
+import {DetailedError} from './utils'
 
 export function make_url (app_name, path) {
   if (path.match(/^https?:\//)) {

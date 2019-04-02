@@ -1,6 +1,6 @@
 {
   "name": "reactstrap-toolbox",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Tools for react and reactstrap",
   "main": "lib/index.js",
   "repository": "https://github.com/samuelcolvin/reactstrap-toolbox",
@@ -20,6 +20,11 @@
     "components",
     "react-component",
     "ui"
+  ],
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib"
   ],
   "peerDependencies": {
     "react": "^16.0.0",

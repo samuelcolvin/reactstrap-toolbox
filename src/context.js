@@ -1,5 +1,5 @@
 import React from 'react'
-import {get_component_name} from './index'
+import {get_component_name} from './utils'
 
 export const GlobalContext = React.createContext({})
 
