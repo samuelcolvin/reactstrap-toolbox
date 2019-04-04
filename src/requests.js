@@ -46,6 +46,7 @@ export function headers2obj (r) {
 }
 
 export async function request (method, path, config) {
+  config = config || {}
   const make_url_ = config.make_url || make_url
   let url = make_url_(path, config)
 
@@ -90,5 +91,41 @@ export async function request (method, path, config) {
     }
     const message = response_data.message || `Unexpected response ${r.status}`
     throw DetailedError(message, {status: r.status, url, init, response_data, headers: headers2obj(r)})
+  }
+}
+
+export class Requests {
+  constructor (config) {
+    this.config = config
+    this.get = this.get.bind(this)
+    this.post = this.post.bind(this)
+    this.put = this.put.bind(this)
+    this.patch = this.patch.bind(this)
+    this.delete = this.delete.bind(this)
+  }
+
+  async get (path, args, config) {
+    const c = Object.assign({}, this.config, config || {}, {args})
+    return await request('GET', path, c)
+  }
+
+  async post (path, send_data, config) {
+    const c = Object.assign({}, this.config, config || {}, {send_data})
+    return await request('POST', path, c)
+  }
+
+  async put (path, send_data, config) {
+    const c = Object.assign({}, this.config, config || {}, {send_data})
+    return await request('PUT', path, c)
+  }
+
+  async patch (path, send_data, config) {
+    const c = Object.assign({}, this.config, config || {}, {send_data})
+    return await request('PATCH', path, c)
+  }
+
+  async delete (path, send_data, config) {
+    const c = Object.assign({}, this.config, config || {}, {send_data})
+    return await request('DELETE', path, c)
   }
 }
