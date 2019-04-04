@@ -1,6 +1,6 @@
 {
   "name": "reactstrap-toolbox",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Tools for react and reactstrap",
   "main": "lib/index.js",
   "repository": "https://github.com/samuelcolvin/reactstrap-toolbox",
@@ -27,10 +27,10 @@
     "lib"
   ],
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "reactstrap": "^7.1.0",
-    "react-router-dom": "^5.0.0"
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "reactstrap": ">=7.1.0",
+    "react-router-dom": ">=5.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
