@@ -30,7 +30,7 @@ export const NotFound = withRouter(({url, children, location, className}) => (
 
 export const Loading = ({className, children}) => (
   <div className={combine_classes(className,'d-flex justify-content-center py-2 loading')}>
-    <Spinner color="info" />
+    <Spinner color="info"/>
     {children}
   </div>
 )
