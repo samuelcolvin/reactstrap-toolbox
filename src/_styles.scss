@@ -18,10 +18,11 @@
   height: 23px;
 }
 
-$toast-top-before: 0;
-$toast-top: 30px;
-$toast-fade-time: 700ms;
-@keyframes toast-open {
+$toast-top-before: 0  !default;
+$toast-top: 30px  !default;
+$toast-fade-time: 700ms  !default;
+$toast-width: $toast-max-width !default;
+@keyframes toast-opening {
   from {
     top: $toast-top-before;
     opacity: 0;
@@ -32,7 +33,7 @@ $toast-fade-time: 700ms;
   }
 }
 
-@keyframes toast-close {
+@keyframes toast-closing {
   from {
     top: $toast-top;
     opacity: 1;
@@ -45,17 +46,17 @@ $toast-fade-time: 700ms;
 
 .toast-msg {
   position: fixed;
-  right: 50px;
-  animation-name: toast-open;
+  right: $toast-top;
+  animation-name: toast-opening;
   animation-duration: $toast-fade-time;
   top: $toast-top;
   opacity: 1;
   z-index: 1040;
   .toast {
-    width: $toast-max-width;
+    width: $toast-width;
   }
-  &.t-close {
-    animation-name: toast-close;
+  &.t-closing {
+    animation-name: toast-closing;
     animation-duration: $toast-fade-time;
     top: $toast-top-before;
     opacity: 0;

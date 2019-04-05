@@ -9,23 +9,22 @@ import {get_create_element} from './confirm'
 
 class ToastMessage extends React.Component {
   state = {open: true, closing: false}
-  v = 0
+  v = 0 // used to stop the animation progression on user input, eg. new message or close
 
   componentDidMount () {
-    this.run()
+    this.run(this.v)
   }
 
   componentDidUpdate (prevProps) {
     if (this.props !== prevProps) {
       this.v += 1
       this.setState({open: true, closing: false})
-      this.run()
+      this.run(this.v)
     }
   }
 
-  run = async () => {
-    const v = this.v
-    await sleep(this.props.show_time || 5000)
+  run = async (v) => {
+    await sleep(this.props.time || 5000)
     if (v === this.v) {
       await this._finish(v)
     }
@@ -49,7 +48,7 @@ class ToastMessage extends React.Component {
       return null
     }
     return (
-      <div className={'toast-msg' + (this.state.closing ? ' t-close' : '')}>
+      <div className={'toast-msg' + (this.state.closing ? ' t-closing' : '')}>
         <Toast>
           <ToastHeader toggle={() => this.close()}>
             {this.props.icon && <FontAwesomeIcon icon={this.props.icon} className="mr-2"/>}
@@ -64,6 +63,6 @@ class ToastMessage extends React.Component {
   }
 }
 
-export function message_toast ({message, title, icon}) {
-  ReactDOM.render(<ToastMessage {...{message, title, icon}}/>, get_create_element('rstb-message-toast'))
+export function message_toast ({message, title, icon, time}) {
+  ReactDOM.render(<ToastMessage {...{message, title, icon, time}}/>, get_create_element('rstb-message-toast'))
 }
