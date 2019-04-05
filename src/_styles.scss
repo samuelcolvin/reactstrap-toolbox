@@ -17,3 +17,47 @@
   color: $form-feedback-invalid-color;
   height: 23px;
 }
+
+$toast-top-before: 0;
+$toast-top: 30px;
+$toast-fade-time: 700ms;
+@keyframes toast-open {
+  from {
+    top: $toast-top-before;
+    opacity: 0;
+  }
+  to {
+    top: $toast-top;
+    opacity: 1;
+  }
+}
+
+@keyframes toast-close {
+  from {
+    top: $toast-top;
+    opacity: 1;
+  }
+  to {
+    top: $toast-top-before;
+    opacity: 0;
+  }
+}
+
+.toast-msg {
+  position: fixed;
+  right: 50px;
+  animation-name: toast-open;
+  animation-duration: $toast-fade-time;
+  top: $toast-top;
+  opacity: 1;
+  z-index: 1040;
+  .toast {
+    width: $toast-max-width;
+  }
+  &.t-close {
+    animation-name: toast-close;
+    animation-duration: $toast-fade-time;
+    top: $toast-top-before;
+    opacity: 0;
+  }
+}
