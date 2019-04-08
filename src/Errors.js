@@ -12,7 +12,7 @@ export const Error = ({error, className}) => {
       <div className={combine_classes(className, 'error')}>
         <h1>Error</h1>
         <p>
-          {error.status ? <span>{error.status}: </span> : ''}
+          {error.status ? <span>{error.status}: </span> : null}
           {error.message ? error.message : error.toString()}.
         </p>
       </div>
@@ -29,8 +29,12 @@ export const NotFound = withRouter(({url, children, location, className}) => (
 ))
 
 export const Loading = ({className, children}) => (
-  <div className={combine_classes(className,'d-flex justify-content-center py-2 loading')}>
-    <Spinner color="info"/>
-    {children}
+  <div className={combine_classes(className, 'loading')}>
+    <div className="text-center py-2">
+      <Spinner color="info"/>
+    </div>
+    <div className="text-center text-muted">
+      {children}
+    </div>
   </div>
 )
