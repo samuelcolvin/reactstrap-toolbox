@@ -25,7 +25,7 @@ class ChoiceModal extends React.Component {
         <div className="text-right">
           <ButtonGroup>
             {this.props.choices.map((c, i) => (
-              <Button key={i} size="sm" color={c.colour || null} onClick={() => this.finish(c.answer)}>
+              <Button key={i} size="sm" color={c.colour || 'secondary'} onClick={() => this.finish(c.answer)}>
                 {c.text}
               </Button>
             ))}
