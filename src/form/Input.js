@@ -9,7 +9,7 @@ import {
 } from 'reactstrap'
 import {as_title} from '../utils'
 
-export const Label = ({field, children}) => (
+export const InputLabel = ({field, children}) => (
   field.show_label !== false ? (
     <BsLabel for={field.name} className={field.required ? 'required' : ''}>
      { children}
@@ -18,11 +18,11 @@ export const Label = ({field, children}) => (
   ) : null
 )
 
-export const HelpText = ({field}) => (
+export const InputHelpText = ({field}) => (
   field.help_text ? <FormText>{field.help_text} {field.required && <span>(required)</span>}</FormText> : null
 )
 
-export const placeholder = field => {
+const placeholder = field => {
   if (field.placeholder === true) {
     return field.title
   } else if (field.placeholder) {
@@ -31,9 +31,9 @@ export const placeholder = field => {
   return null
 }
 
-export const GeneralInput = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => (
+export const InputGeneral = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => (
   <FormGroup className={className || field.className}>
-    <Label field={field}/>
+    <InputLabel field={field}/>
     <BsInput type={custom_type || field.type || 'text'}
              className={field.inputClassName}
              invalid={!!error}
@@ -48,13 +48,13 @@ export const GeneralInput = ({className, field, error, disabled, value, onChange
              onBlur={e => onBlur(e.target.value)}
              {...extra}/>
     {error && <FormFeedback>{error}</FormFeedback>}
-    <HelpText field={field}/>
+    <InputHelpText field={field}/>
   </FormGroup>
 )
 
-export const Checkbox = ({className, field, disabled, value, onChange, onBlur}) => (
+export const InputCheckbox = ({className, field, disabled, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className || 'py-2'} check>
-    <Label field={field}>
+    <InputLabel field={field}>
       <BsInput type="checkbox"
                label={field.title}
                disabled={disabled}
@@ -64,14 +64,14 @@ export const Checkbox = ({className, field, disabled, value, onChange, onBlur}) 
                checked={value || false}
                onChange={e => onChange(e.target.checked)}
                onBlur={e => onBlur(e.target.checked)}/>
-    </Label>
-    <HelpText field={field}/>
+    </InputLabel>
+    <InputHelpText field={field}/>
   </FormGroup>
 )
 
-export const Select = ({className, field, disabled, error, value, onChange, onBlur}) => (
+export const InputSelect = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
-    <Label field={field}/>
+    <InputLabel field={field}/>
     <CustomInput type="select"
                  invalid={!!error}
                  value={value || ''}
@@ -89,30 +89,30 @@ export const Select = ({className, field, disabled, error, value, onChange, onBl
       ))}
     </CustomInput>
     {error && <FormFeedback>{error}</FormFeedback>}
-    <HelpText field={field}/>
+    <InputHelpText field={field}/>
   </FormGroup>
 )
 
-export const IntegerInput = props => (
-  <GeneralInput {...props} custom_type="number" step="1" min={props.field.min} max={props.field.max}
+export const InputInteger = props => (
+  <InputGeneral {...props} custom_type="number" step="1" min={props.field.min} max={props.field.max}
                 onChange={v => props.onChange(v ? parseInt(v) : null)}/>
 )
 
-export const NumberInput = props => (
-  <GeneralInput {...props} custom_type="number" step={props.field.step} min={props.field.min} max={props.field.max}
+export const InputNumber = props => (
+  <InputGeneral {...props} custom_type="number" step={props.field.step} min={props.field.min} max={props.field.max}
                 onChange={v => props.onChange(v ? parseFloat(v) : null)}/>
 )
 
 const INPUT_LOOKUP = {
-  bool: Checkbox,
-  select: Select,
-  int: IntegerInput,
-  number: NumberInput,
+  bool: InputCheckbox,
+  select: InputSelect,
+  int: InputInteger,
+  number: InputNumber,
 }
 
-export default props => {
+export const InputWrapper = props => {
   let InputComp = props.type_lookup && props.type_lookup[props.field.type]
-  InputComp = InputComp || INPUT_LOOKUP[props.field.type] || GeneralInput
+  InputComp = InputComp || INPUT_LOOKUP[props.field.type] || InputGeneral
 
   props.field.title = props.field.title || as_title(props.field.name)
   const value = [null, undefined].includes(props.value) ? props.field.default : props.value

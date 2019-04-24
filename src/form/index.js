@@ -1,10 +1,8 @@
 import React from 'react'
 import {Button, ButtonGroup, Form as BootstrapForm} from 'reactstrap'
 import {AsModal} from '../Modal'
-import Input, * as inputs from './Input'
+import {InputWrapper} from './Input'
 import {WithContext} from '../context'
-
-export {Input, inputs}
 
 const DefaultRenderFields = ({fields, RenderField}) => (
   Object.values(fields).map(field => <RenderField key={field.name} field={field}/>)
@@ -108,7 +106,7 @@ class _Form extends React.Component {
     const field_value = this.props.form_data[field.name]
     const value = field_value === undefined ? (this.props.initial || {})[field.name] : field_value
     return (
-      <Input
+      <InputWrapper
         field={field}
         value={value}
         error={this.errors[field.name]}

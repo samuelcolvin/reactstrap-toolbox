@@ -1,5 +1,3 @@
-import * as form from './form'
-
 export {GlobalContext, WithContext} from './context'
 export {Error, NotFound, Loading} from './Errors'
 export {AsModal} from './Modal'
@@ -8,4 +6,14 @@ export {confirm_modal, choice_modal} from './confirm'
 export {message_toast} from './toast'
 export * from './utils'
 
-export {form}
+export {
+  InputLabel,
+  InputHelpText,
+  InputGeneral,
+  InputCheckbox,
+  InputSelect,
+  InputInteger,
+  InputNumber,
+  InputWrapper,
+} from './form/Input'
+export {Form, StandaloneForm, ModalForm} from './form'
