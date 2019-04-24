@@ -1,10 +1,10 @@
 import React from 'react'
 import {Button, ButtonGroup, Form as BootstrapForm} from 'reactstrap'
 import {AsModal} from '../Modal'
-import Input from './Input'
+import Input, * as inputs from './Input'
 import {WithContext} from '../context'
 
-export {Input}
+export {Input, inputs}
 
 const DefaultRenderFields = ({fields, RenderField}) => (
   Object.values(fields).map(field => <RenderField key={field.name} field={field}/>)

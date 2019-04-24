@@ -9,7 +9,7 @@ import {
 } from 'reactstrap'
 import {as_title} from '../utils'
 
-const Label = ({field, children}) => (
+export const Label = ({field, children}) => (
   field.show_label !== false ? (
     <BsLabel for={field.name} className={field.required ? 'required' : ''}>
      { children}
@@ -18,11 +18,11 @@ const Label = ({field, children}) => (
   ) : null
 )
 
-const HelpText = ({field}) => (
+export const HelpText = ({field}) => (
   field.help_text ? <FormText>{field.help_text} {field.required && <span>(required)</span>}</FormText> : null
 )
 
-const placeholder = field => {
+export const placeholder = field => {
   if (field.placeholder === true) {
     return field.title
   } else if (field.placeholder) {
@@ -31,7 +31,7 @@ const placeholder = field => {
   return null
 }
 
-const GeneralInput = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => (
+export const GeneralInput = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => (
   <FormGroup className={className || field.className}>
     <Label field={field}/>
     <BsInput type={custom_type || field.type || 'text'}
@@ -52,7 +52,7 @@ const GeneralInput = ({className, field, error, disabled, value, onChange, onBlu
   </FormGroup>
 )
 
-const Checkbox = ({className, field, disabled, value, onChange, onBlur}) => (
+export const Checkbox = ({className, field, disabled, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className || 'py-2'} check>
     <Label field={field}>
       <BsInput type="checkbox"
@@ -69,7 +69,7 @@ const Checkbox = ({className, field, disabled, value, onChange, onBlur}) => (
   </FormGroup>
 )
 
-const Select = ({className, field, disabled, error, value, onChange, onBlur}) => (
+export const Select = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
     <Label field={field}/>
     <CustomInput type="select"
@@ -93,12 +93,12 @@ const Select = ({className, field, disabled, error, value, onChange, onBlur}) =>
   </FormGroup>
 )
 
-const IntegerInput = props => (
+export const IntegerInput = props => (
   <GeneralInput {...props} custom_type="number" step="1" min={props.field.min} max={props.field.max}
                 onChange={v => props.onChange(v ? parseInt(v) : null)}/>
 )
 
-const NumberInput = props => (
+export const NumberInput = props => (
   <GeneralInput {...props} custom_type="number" step={props.field.step} min={props.field.min} max={props.field.max}
                 onChange={v => props.onChange(v ? parseFloat(v) : null)}/>
 )
@@ -110,7 +110,7 @@ const INPUT_LOOKUP = {
   number: NumberInput,
 }
 
-const Input = props => {
+export default props => {
   let InputComp = props.type_lookup && props.type_lookup[props.field.type]
   InputComp = InputComp || INPUT_LOOKUP[props.field.type] || GeneralInput
 
@@ -127,5 +127,3 @@ const Input = props => {
     />
   )
 }
-
-export default Input

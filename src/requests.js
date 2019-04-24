@@ -65,7 +65,7 @@ export async function request (method, path, config={}) {
     headers['Content-Type'] = 'application/json'
   }
 
-  const init = {method: method, headers: headers, credentials: 'include'}
+  const init = {method, headers, credentials: 'include'}
   if (config.send_data) {
     init.body = JSON.stringify(config.send_data)
   }
