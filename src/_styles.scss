@@ -18,47 +18,46 @@
   height: 23px;
 }
 
-$toast-top-before: 0  !default;
-$toast-top: 30px  !default;
-$toast-fade-time: 700ms  !default;
+$toast-top-before: -83px  !default;
+$toast-top: 10px  !default;
 $toast-width: $toast-max-width !default;
 @keyframes toast-opening {
   from {
-    top: $toast-top-before;
+    margin-top: $toast-top-before;
+    opacity: 0;
+  }
+  50% {
     opacity: 0;
   }
   to {
-    top: $toast-top;
+    margin-top: $toast-top;
     opacity: 1;
   }
 }
 
-@keyframes toast-closing {
-  from {
-    top: $toast-top;
-    opacity: 1;
-  }
-  to {
-    top: $toast-top-before;
-    opacity: 0;
-  }
+.toast-msgs {
+  position: fixed;
+  right: 30px;
+  top: 30px;
+  z-index: 1040;
 }
 
 .toast-msg {
-  position: fixed;
-  right: $toast-top;
   animation-name: toast-opening;
-  animation-duration: $toast-fade-time;
-  top: $toast-top;
+  animation-duration: 700ms;
   opacity: 1;
-  z-index: 1040;
+  margin-top: $toast-top;
+  transition: margin-top 1000ms, opacity 500ms;
   .toast {
     width: $toast-width;
   }
   &.t-closing {
-    animation-name: toast-closing;
-    animation-duration: $toast-fade-time;
-    top: $toast-top-before;
+    margin-top: $toast-top-before;
     opacity: 0;
   }
+}
+
+.toast-progress {
+  height: 3px;
+  background: lighten($primary, 30%);
 }
