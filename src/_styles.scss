@@ -61,3 +61,7 @@ $toast-width: $toast-max-width !default;
   height: 3px;
   background: lighten($primary, 30%);
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

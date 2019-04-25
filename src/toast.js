@@ -53,12 +53,23 @@ class ToastMessage extends React.Component {
     this.hover = v
   }
 
+  onClick = e => {
+    if (this.props.onClick) {
+      e.close = () => this.close()
+      this.props.onClick(e)
+    }
+  }
+
   render () {
     if (!this.state.open) {
       return <div/>
     }
+    const classes = ['toast-msg']
+    this.state.closing && classes.push('t-closing')
+    this.props.onClick && classes.push('cursor-pointer')
+    this.props.className && classes.push(this.this.props.className)
     return (
-      <div className={'toast-msg' + (this.state.closing ? ' t-closing' : '')}>
+      <div className={classes.join(' ')} onClick={this.onClick}>
         <Toast onMouseEnter={() => this.set_hover(true)} onMouseLeave={() => this.set_hover(false)}>
           <ToastHeader toggle={() => this.close()}>
             {this.props.icon && <FontAwesomeIcon icon={this.props.icon} className="mr-2"/>}
@@ -112,9 +123,9 @@ class ToastMessages extends React.Component {
 
 const rand_int = () => Math.round(Math.random() * 100000)
 
-export function message_toast ({message, title, icon, time = 5000, progress = true}) {
+export function message_toast ({title, message, icon, onClick, className, time = 5000, progress = true}) {
   ReactDOM.render(
-    <ToastMessages {...{message, title, icon, time, progress, tkey: rand_int()}}/>,
+    <ToastMessages {...{title, message, icon, onClick, className, time, progress, tkey: rand_int()}}/>,
     get_create_element('rstb-message-toast')
   )
 }
