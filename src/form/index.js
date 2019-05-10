@@ -80,7 +80,7 @@ class _Form extends React.Component {
     }
     this.setState({disabled: true, errors: {}, form_error: null})
     const data = this.props.submit_data ? this.props.submit_data() : Object.assign({}, this.props.form_data)
-    const r = await this.props.ctx.worker.call(this.props.function, data)
+    const r = await this.props.function(data)
     if (r.status >= 400) {
       console.warn('form error', r)
       const errors = {}
