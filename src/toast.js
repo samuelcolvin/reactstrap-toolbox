@@ -123,8 +123,15 @@ class ToastMessages extends React.Component {
 
 const rand_int = () => Math.round(Math.random() * 100000)
 
-export function message_toast ({title, message, icon, onClick, className, time = 5000, progress = true, body = null}) {
+export function message_toast (
+  {title, message, icon, onClick, className, time = 5000, progress = true, body = null, toast_icon = null}
+) {
   message = message || body
+  icon = toast_icon || icon
+  if (typeof(icon) === 'string' && !/^fa/.test(icon)) {
+    // happens when the icon was set in notify
+    icon = null
+  }
   ReactDOM.render(
     <ToastMessages {...{title, message, icon, onClick, className, time, progress, tkey: rand_int()}}/>,
     get_create_element('rstb-message-toast')
