@@ -123,7 +123,8 @@ class ToastMessages extends React.Component {
 
 const rand_int = () => Math.round(Math.random() * 100000)
 
-export function message_toast ({title, message, icon, onClick, className, time = 5000, progress = true}) {
+export function message_toast ({title, message, icon, onClick, className, time = 5000, progress = true, body = null}) {
+  message = message || body
   ReactDOM.render(
     <ToastMessages {...{title, message, icon, onClick, className, time, progress, tkey: rand_int()}}/>,
     get_create_element('rstb-message-toast')

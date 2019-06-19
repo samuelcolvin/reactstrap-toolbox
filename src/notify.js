@@ -43,7 +43,7 @@ export class Notify {
       this._toast(msg)
     } else {
       const n = new Notification(msg.title, {
-        body: msg.message,
+        body: msg.message || msg.body,
         icon: msg.icon,
         badge: msg.badge,
       })
