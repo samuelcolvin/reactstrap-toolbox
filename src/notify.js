@@ -4,9 +4,8 @@ import {message_toast} from './toast'
 const now = () => new Date()
 
 export class Notify {
-  constructor (history, icon, browser_inactive_time) {
+  constructor (history, browser_inactive_time) {
     this.history = history
-    this.icon = icon || null
     this.last_event = now()
     this.browser_inactive_time = browser_inactive_time || 5000
     document.addEventListener('keydown', this._on_event)
@@ -33,22 +32,28 @@ export class Notify {
     this._toast(msg)
   }
 
+  window_active = () => !document.hidden && now() - this.last_event < this.browser_inactive_time
+
   _on_event = () => {
     this.last_event = now()
   }
 
   _show_notification = msg => {
-    if (!document.hidden && now() - this.last_event < this.browser_inactive_time) {
+    if (this.window_active()) {
       this._toast(msg)
     } else {
       const n = new Notification(msg.title, {
         body: msg.message,
-        icon: this.icon,
+        icon: msg.icon,
+        badge: msg.badge,
       })
       n.onclick = () => {
         n.close()
         window.focus()
-        this.history.push(msg.link)
+        const link = msg.link || (msg.data || {}).link
+        if (link) {
+          this.history.push(link)
+        }
       }
     }
   }
@@ -56,7 +61,10 @@ export class Notify {
   _toast = msg => {
     const onClick = e => {
       e.close()
-      this.history.push(msg.link)
+      const link = msg.link || (msg.data || {}).link
+      if (link) {
+        this.history.push(link)
+      }
     }
     message_toast(Object.assign({onClick, progress: false}, msg))
   }
