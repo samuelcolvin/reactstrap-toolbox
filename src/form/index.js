@@ -53,33 +53,26 @@ class _Form extends React.Component {
     }
   }
 
-  submit = async (e) => {
+  submit = async e => {
     e && e.preventDefault()
-    if (Object.keys(this.props.form_data).length === 0) {
-      this.setState({form_error: 'No data entered'})
+    const data = this.props.submit_data ? this.props.submit_data(this.props.form_data) : {...this.props.form_data}
+    if (this.props.errors && Object.values(this.props.errors).some(v => v)) {
       return
     }
-    if (this.props.errors && Object.values(this.props.errors).filter(v => v).length > 0) {
+    if (Object.keys(data).length === 0) {
+      this.setState({form_error: 'No data entered'})
       return
     }
     const initial = this.props.initial || {}
     const missing = (
-      Object.values(this.props.fields)
-      .filter(f => f.required && !initial[f.name] && !this.props.form_data[f.name])
-      .map(f => f.name)
+      Object.values(this.props.fields).filter(f => f.required && !initial[f.name] && !data[f.name])
     )
     if (missing.length) {
       // required since editors don't use inputs so required won't be caught be the browser
-      const errors = {}
-      missing.forEach(f => {errors[f] = 'Field Required'})
-      this.setState({
-        form_error: 'Required fields are emtpy',
-        errors: errors,
-      })
+      this.setState({errors: missing.reduce((o, f) => ({...o, [f.name]: 'Field Required'}), {})})
       return
     }
     this.setState({disabled: true, errors: {}, form_error: null})
-    const data = this.props.submit_data ? this.props.submit_data() : Object.assign({}, this.props.form_data)
     const r = await this.props.function(data)
     if (r.status >= 400) {
       console.warn('form error', r)
@@ -96,9 +89,8 @@ class _Form extends React.Component {
   }
 
   setField = (name, value) => {
-    const form_data = Object.assign({}, this.props.form_data, {[name]: value})
     if (this.props.onChange) {
-      return this.props.onChange(form_data)
+      return this.props.onChange({...this.props.form_data, [name]: value})
     }
   }
 
@@ -119,11 +111,7 @@ class _Form extends React.Component {
   }
 
   render () {
-    if (this.props.errors) {
-      this.errors = Object.assign({}, this.state.errors, this.props.errors)
-    } else {
-      this.errors = this.state.errors
-    }
+    this.errors = {...this.state.errors, ...(this.props.errors || {})}
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
     return (

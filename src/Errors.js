@@ -1,8 +1,7 @@
 import React from 'react'
 import {Spinner} from 'reactstrap'
 import {withRouter} from 'react-router-dom'
-
-const combine_classes = (className, default_cls) => className ? `${default_cls} ${className}` : default_cls
+import {combine_classes} from './utils'
 
 export const Error = ({error, className}) => {
   if (error.status === 404) {

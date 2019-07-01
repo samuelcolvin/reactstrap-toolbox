@@ -111,8 +111,9 @@ const INPUT_LOOKUP = {
 }
 
 export const InputWrapper = props => {
-  let InputComp = props.type_lookup && props.type_lookup[props.field.type]
-  InputComp = InputComp || INPUT_LOOKUP[props.field.type] || InputGeneral
+  const InputComp = (
+    (props.type_lookup && props.type_lookup[props.field.type]) || INPUT_LOOKUP[props.field.type] || InputGeneral
+  )
 
   props.field.title = props.field.title || as_title(props.field.name)
   const value = [null, undefined].includes(props.value) ? props.field.default : props.value

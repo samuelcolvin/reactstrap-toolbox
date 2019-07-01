@@ -39,3 +39,5 @@ export function load_script (url) {
     }
   })
 }
+
+export const combine_classes = (...classes) => classes.filter(c => c).join(' ')
