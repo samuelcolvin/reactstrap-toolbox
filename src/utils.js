@@ -13,6 +13,7 @@ export const get_component_name = Comp => Comp.displayName || Comp.name || 'Comp
 export const on_mobile = /mobile|ip(hone|od|ad)|android|blackberry|opera mini/i.test(navigator.userAgent)
 
 class _DetailedError extends Error {
+  name = 'DetailedError'
   constructor (message, details) {
     super()
     this.message = message

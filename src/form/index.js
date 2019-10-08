@@ -27,6 +27,7 @@ const DefaultFormButtons = ({state, form_props}) => (
 class _Form extends React.Component {
   constructor (props) {
     super(props)
+    this.form_ref = React.createRef()
     this.state = {
       disabled: false,
       errors: {},
@@ -54,7 +55,13 @@ class _Form extends React.Component {
   }
 
   submit = async e => {
-    e && e.preventDefault()
+    if (e) {
+      // check it's this form that was submitted
+      if (e.target !== this.form_ref.current) {
+        return
+      }
+      e.preventDefault()
+    }
     const data = this.props.submit_data ? this.props.submit_data(this.props.form_data) : {...this.props.form_data}
     if (this.props.errors && Object.values(this.props.errors).some(v => v)) {
       return
@@ -115,7 +122,7 @@ class _Form extends React.Component {
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
     return (
-      <BootstrapForm onSubmit={this.submit} className="highlight-required">
+      <BootstrapForm onSubmit={this.submit} className="highlight-required" ref={this.form_ref}>
         <div className={this.props.form_body_class}>
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
           <RenderFields fields={this.props.fields || {}} RenderField={this.render_field}/>
