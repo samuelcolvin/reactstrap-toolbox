@@ -5,3 +5,8 @@
 [![License](https://img.shields.io/npm/l/reactstrap-toolbox.svg)](https://github.com/samuelcolvin/reactstrap-toolbox/blob/master/LICENSE)
 
 Tools for react and reactstrap.
+
+To deploy:
+
+    yarn build
+    yarn publish
