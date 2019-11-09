@@ -60,9 +60,10 @@ export async function request (method, path, config={}) {
     config.expected_status = config.expected_status || [200]
   }
 
-  const headers = {'Accept': 'application/json'}
+  const headers = config.headers || {}
+  headers['Accept'] = headers['Accept'] || 'application/json'
   if (method !== 'GET') {
-    headers['Content-Type'] = 'application/json'
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json'
   }
 
   const init = {method, headers, credentials: 'include'}
@@ -77,9 +78,14 @@ export async function request (method, path, config={}) {
     throw DetailedError(error.message, {error: error.toString(), status: 0, url, init})
   }
   if (config.expected_status.includes(r.status)) {
-    return {
-      data: await r.json(),
-      status: r.status,
+    if (config.raw_response) {
+      // e.g. you might want to use a stream and process one line of nd-json at a time or something
+      return r
+    } else {
+      return {
+        data: await r.json(),
+        status: r.status,
+      }
     }
   } else {
     let response_data = {}
