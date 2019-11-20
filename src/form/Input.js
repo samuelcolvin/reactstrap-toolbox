@@ -69,6 +69,16 @@ export const InputCheckbox = ({className, field, disabled, value, onChange, onBl
   </FormGroup>
 )
 
+function prep_choice (c) {
+  if (typeof(c) === 'string') {
+    c = {value: c}
+  }
+  if (typeof(c) !== 'object' || typeof(c.value) !== 'string') {
+    throw TypeError(`choice not an object or choice.value not a string: ${c}`)
+  }
+  return {value: c.value, label: c.label || as_title(c.value)}
+}
+
 export const InputSelect = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field}/>
@@ -82,10 +92,8 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
                  onChange={e => onChange(e.target.value)}
                  onBlur={e => onBlur(e.target.value)}>
       {field.allow_empty !== false && <option value="">&mdash;</option>}
-      {field.choices && field.choices.map((choice, i) => (
-        <option key={i} value={choice.value}>
-          {choice.label || as_title(choice.value)}
-        </option>
+      {field.choices && field.choices.map(prep_choice).map((c, i) => (
+        <option key={i} value={c.value}>{c.label}</option>
       ))}
     </CustomInput>
     {error && <FormFeedback>{error}</FormFeedback>}
@@ -110,21 +118,17 @@ const INPUT_LOOKUP = {
   number: InputNumber,
 }
 
-export const InputWrapper = props => {
+export const InputWrapper = ({field, value, type_lookup, ...props}) => {
   const InputComp = (
-    (props.type_lookup && props.type_lookup[props.field.type]) || INPUT_LOOKUP[props.field.type] || InputGeneral
+    (type_lookup && type_lookup[field.type]) || INPUT_LOOKUP[field.type] || InputGeneral
   )
 
-  props.field.title = props.field.title || as_title(props.field.name)
-  const value = [null, undefined].includes(props.value) ? props.field.default : props.value
+  field.title = field.title || as_title(field.name)
   return (
     <InputComp
-      field={props.field}
-      error={props.error}
-      value={value}
-      disabled={props.disabled}
-      onChange={props.onChange}
-      onBlur={props.onBlur}
+      field={field}
+      value={[null, undefined].includes(value) ? field.default : value}
+      {...props}
     />
   )
 }

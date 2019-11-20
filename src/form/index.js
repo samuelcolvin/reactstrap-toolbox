@@ -34,11 +34,6 @@ class _Form extends React.Component {
       form_error: null,
     }
     this.errors = {}
-    if (this.props.fields) {
-      for (const [k, v] of Object.entries(this.props.fields)) {
-        v['name'] = k
-      }
-    }
   }
 
   componentDidMount () {
@@ -129,11 +124,19 @@ class _Form extends React.Component {
     this.errors = {...this.state.errors, ...(this.props.errors || {})}
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
+
+    const fields = {}
+    if (this.props.fields) {
+      for (const [k, v] of Object.entries(this.props.fields)) {
+        fields[k] = Object.assign({}, v, {name: k})
+      }
+    }
+
     return (
       <BootstrapForm onSubmit={this.submit} className="highlight-required" ref={this.form_ref}>
         <div className={this.props.form_body_class}>
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
-          <RenderFields fields={this.props.fields || {}} RenderField={this.render_field}/>
+          <RenderFields fields={fields} RenderField={this.render_field}/>
         </div>
         <Buttons state={this.state} form_props={this.props} setField={this.setField} submit={this.submit}/>
       </BootstrapForm>

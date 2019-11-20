@@ -6,7 +6,7 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 // usage as_title('what_ever') > 'What Ever'
-export const as_title = s => s.replace(/(_|-)/g, ' ').replace(/(_|\b)\w/g, l => l.toUpperCase())
+export const as_title = s => (s || '').replace(/(_|-)/g, ' ').replace(/(_|\b)\w/g, l => l.toUpperCase())
 
 export const get_component_name = Comp => Comp.displayName || Comp.name || 'Component'
 
