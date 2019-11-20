@@ -101,7 +101,15 @@ class _Form extends React.Component {
     }
   }
 
-  render_field = ({field}) => {
+  render_field = ({field, optional}) => {
+    if (!field) {
+      if (optional) {
+        return null
+      }
+      throw TypeError(
+        'RenderField: field undefined but "optional" not set, make sure all fields referenced are properly defined.'
+      )
+    }
     const field_value = this.props.form_data[field.name]
     const value = field_value === undefined ? (this.props.initial || {})[field.name] : field_value
     return (

@@ -94,7 +94,10 @@ export async function request (method, path, config={}) {
     } catch (e) {
       // ignore and use normal error
     }
-    const message = response_data.message || `Unexpected response ${r.status}`
+    let message = `Unexpected response ${r.status}`
+    if (response_data.message) {
+      message += ` response message: ${response_data.message}`
+    }
     throw DetailedError(message, {status: r.status, url, init, response_data, headers: headers2obj(r)})
   }
 }
