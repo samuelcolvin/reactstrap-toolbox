@@ -27,7 +27,6 @@ const DefaultFormButtons = ({state, form_props}) => (
 class _Form extends React.Component {
   constructor (props) {
     super(props)
-    this.form_ref = React.createRef()
     this.state = {
       disabled: false,
       errors: {},
@@ -49,10 +48,12 @@ class _Form extends React.Component {
     }
   }
 
+  form_id = () => this.props.id || 'rstb-form'
+
   submit = async e => {
     if (e) {
       // check it's this form that was submitted
-      if (e.target !== this.form_ref.current) {
+      if (e.target.id !== this.form_id()) {
         return
       }
       e.preventDefault()
@@ -133,7 +134,7 @@ class _Form extends React.Component {
     }
 
     return (
-      <BootstrapForm onSubmit={this.submit} className="highlight-required" ref={this.form_ref}>
+      <BootstrapForm onSubmit={this.submit} className="highlight-required" id={this.form_id()}>
         <div className={this.props.form_body_class}>
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
           <RenderFields fields={fields} RenderField={this.render_field}/>
