@@ -68,7 +68,7 @@ class _Form extends React.Component {
     }
     const initial = this.props.initial || {}
     const missing = (
-      Object.values(this.props.fields).filter(f => f.required && !initial[f.name] && !data[f.name])
+      Object.values(this.get_fields()).filter(f => f.required && !initial[f.name] && !data[f.name])
     )
     if (missing.length) {
       // required since editors don't use inputs so required won't be caught be the browser
@@ -78,12 +78,11 @@ class _Form extends React.Component {
     this.setState({disabled: true, errors: {}, form_error: null})
     const r = await this.props.function(data)
     if (r.status >= 400) {
-      console.warn('form error', r)
       const errors = {}
       for (let e of (r.data.details || [])) {
         errors[e.loc[0]] = e.msg
       }
-      this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? 'Error occurred' : null})
+      this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? null : 'Error occurred'})
     } else {
       this.props.success_msg && this.props.ctx.setMessage(this.props.success_msg)
       this.props.submitted && this.props.submitted(r)
@@ -95,6 +94,16 @@ class _Form extends React.Component {
     if (this.props.onChange) {
       return this.props.onChange({...this.props.form_data, [name]: value})
     }
+  }
+
+  get_fields = () => {
+    const fields = {}
+    if (this.props.fields) {
+      for (const [k, v] of Object.entries(this.props.fields)) {
+        fields[k] = Object.assign({}, v, {name: k})
+      }
+    }
+    return fields
   }
 
   render_field = ({field, optional}) => {
@@ -126,12 +135,7 @@ class _Form extends React.Component {
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
 
-    const fields = {}
-    if (this.props.fields) {
-      for (const [k, v] of Object.entries(this.props.fields)) {
-        fields[k] = Object.assign({}, v, {name: k})
-      }
-    }
+    const fields = this.get_fields()
 
     return (
       <BootstrapForm onSubmit={this.submit} className="highlight-required" id={this.form_id()}>
