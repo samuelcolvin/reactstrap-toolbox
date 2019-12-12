@@ -58,7 +58,7 @@ class _Form extends React.Component {
       }
       e.preventDefault()
     }
-    const data = this.props.submit_data ? this.props.submit_data(this.props.form_data) : {...this.props.form_data}
+    const data = this.props.submit_data ? this.props.submit_data({...this.props.form_data}) : {...this.props.form_data}
     if (this.props.errors && Object.values(this.props.errors).some(v => v)) {
       return
     }
@@ -122,10 +122,11 @@ class _Form extends React.Component {
         field={field}
         value={value}
         error={this.errors[field.name]}
-        disabled={this.state.disabled}
+        disabled={this.state.disabled || field.disabled}
         onChange={v => this.setField(field.name, v)}
         type_lookup={this.props.type_lookup}
         onBlur={() => this.props.onBlur && this.props.onBlur(field.name)}
+        {...(field.extra || {})}
       />
     )
   }
