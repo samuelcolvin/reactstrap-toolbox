@@ -13,9 +13,8 @@ export function AsModal (WrappedComponent) {
       super(props)
       this.regex = props.regex || /modal\/$/
       this.state = {
-        shown: this.path_match(),
+        open: this.path_match(),
       }
-      this.change_handlers = []
     }
 
     path_match = () => this.regex.test(this.props.location.pathname)
@@ -28,55 +27,39 @@ export function AsModal (WrappedComponent) {
       }
     }
 
-    setState (s) {
-      return new Promise(resolve => {
-        super.setState(s, resolve)
-      })
-    }
-
     componentDidMount () {
-      this.toggle(null, this.path_match())
-    }
-
-    toggle = (r, shown) => {
-      if (shown !== this.state.shown) {
-        shown = Boolean(shown)
-        this.setState({shown})
-        this.change_handlers.map(h => h({response: r || null, shown, modal: this}))
-        if (!shown) {
-          const parent_uri = this.parent_uri()
-          this.props.history.replace(parent_uri + (r && r.pk ? `${r.pk}/` : ''))
-        }
-      }
+      this.toggle()
     }
 
     componentDidUpdate (prevProps) {
       if (this.props.location.pathname !== prevProps.location.pathname) {
-        this.toggle(null, this.path_match())
+        this.toggle()
       }
     }
 
-    register_change_handler = h => {
-      this.change_handlers.push(h)
-      return () => {
-        this.change_handlers = this.change_handlers.filter(h_ => h_ !== h)
-      }
+    toggle = () => this.setState({open: this.path_match()})
+
+    close = () => this.props.history.replace(this.parent_uri())
+
+    onSubmitWrapper = r => {
+      this.close()
+      this.props.onSubmit && this.props.onSubmit(r)
     }
 
     render () {
       return (
-        <Modal isOpen={this.state.shown} toggle={() => this.toggle()}
+        <Modal isOpen={this.state.open} toggle={this.close}
                size={this.props.size}
                className={this.props.className}>
-          <ModalHeader toggle={() => this.toggle()}>
+          <ModalHeader toggle={this.close}>
             {this.props.title}
             <span id="modal-title"/>
           </ModalHeader>
           <WrappedComponent
             {...this.props}
-            done={this.toggle}
-            modal_shown={this.state.shown}
-            register_change_handler={this.register_change_handler}
+            onCancel={this.close}
+            onSubmit={this.onSubmitWrapper}
+            modal_open={this.state.open}
             form_body_class="modal-body"
             form_footer_class="modal-footer"
           />

@@ -11,12 +11,14 @@ const DefaultRenderFields = ({fields, RenderField}) => (
 const DefaultFormButtons = ({state, form_props}) => (
   <div className={form_props.form_footer_class || 'text-right'}>
     <ButtonGroup>
-      <Button type="button"
-              color="secondary"
-              disabled={state.disabled}
-              onClick={() => form_props.done && form_props.done()}>
-        {form_props.cancel_label || 'Cancel'}
-      </Button>
+      {form_props.onCancel ? (
+        <Button type="button"
+                color="secondary"
+                disabled={state.disabled}
+                onClick={() => form_props.onCancel()}>
+          {form_props.cancel_label || 'Cancel'}
+        </Button>
+      ) : null}
       <Button type="submit" color="primary" disabled={state.disabled}>
         {form_props.save_label || 'Save'}
       </Button>
@@ -85,8 +87,7 @@ class _Form extends React.Component {
       this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? null : 'Error occurred'})
     } else {
       this.props.success_msg && this.props.ctx.setMessage(this.props.success_msg)
-      this.props.submitted && this.props.submitted(r)
-      this.props.done && this.props.done(r)
+      this.props.onSubmit && this.props.onSubmit(r)
     }
   }
 
