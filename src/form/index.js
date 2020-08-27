@@ -78,7 +78,10 @@ class _Form extends React.Component {
       return
     }
     this.setState({disabled: true, errors: {}, form_error: null})
-    const r = await this.props.function(data)
+    let r = await this.props.function(data)
+    if (!r) {
+      r = {status: 200}
+    }
     if (r.status >= 400) {
       const errors = {}
       for (let e of (r.data.details || [])) {

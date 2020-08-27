@@ -1,4 +1,3 @@
-// TODO move to WebWorker/utils/requests.js
 import {DetailedError} from './utils'
 
 export function make_url (path) {
@@ -45,7 +44,7 @@ export function headers2obj (r) {
   }
 }
 
-export async function request (method, path, config={}) {
+export async function request (method, path, config) {
   const make_url_ = config.make_url || make_url
   let url = make_url_(path, config)
 
@@ -57,7 +56,7 @@ export async function request (method, path, config={}) {
   if (Number.isInteger(config.expected_status)) {
     config.expected_status = [config.expected_status]
   } else {
-    config.expected_status = config.expected_status || [200]
+    config.expected_status = config.expected_status || [200, 201]
   }
 
   const headers = config.headers || {}
@@ -65,6 +64,8 @@ export async function request (method, path, config={}) {
   if (method !== 'GET') {
     headers['Content-Type'] = headers['Content-Type'] || 'application/json'
   }
+
+  const on_error = e => config.on_error && config.on_error(e)
 
   const init = {method, headers, credentials: 'include'}
   if (config.send_data) {
@@ -75,7 +76,9 @@ export async function request (method, path, config={}) {
     r = await fetch(url, init)
   } catch (error) {
     // generally TypeError: failed to fetch
-    throw DetailedError(error.message, {error: error.toString(), status: 0, url, init})
+    const e = DetailedError(error.message, {error: error.toString(), status: 0, url, init})
+    on_error(e)
+    throw e
   }
   if (config.expected_status.includes(r.status)) {
     if (config.raw_response) {
@@ -98,41 +101,38 @@ export async function request (method, path, config={}) {
     if (response_data.message) {
       message += ` response message: ${response_data.message}`
     }
-    throw DetailedError(message, {status: r.status, url, init, response_data, headers: headers2obj(r)})
+    const e = DetailedError(message, {status: r.status, url, init, response_data, headers: headers2obj(r)})
+    on_error(e)
+    throw e
   }
 }
 
 export class Requests {
   constructor (config={}) {
     this.config = config
-    this.get = this.get.bind(this)
-    this.post = this.post.bind(this)
-    this.put = this.put.bind(this)
-    this.patch = this.patch.bind(this)
-    this.delete = this.delete.bind(this)
   }
 
-  async get (path, args, config={}) {
+  get = async (path, args, config={}) => {
     const c = Object.assign({}, this.config, config, {args})
     return await request('GET', path, c)
   }
 
-  async post (path, send_data, config={}) {
+  post = async (path, send_data, config={}) => {
     const c = Object.assign({}, this.config, config, {send_data})
     return await request('POST', path, c)
   }
 
-  async put (path, send_data, config={}) {
+  put = async (path, send_data, config={}) => {
     const c = Object.assign({}, this.config, config, {send_data})
     return await request('PUT', path, c)
   }
 
-  async patch (path, send_data, config={}) {
+  patch = async (path, send_data, config={}) => {
     const c = Object.assign({}, this.config, config, {send_data})
     return await request('PATCH', path, c)
   }
 
-  async delete (path, send_data, config={}) {
+  delete = async (path, send_data, config={}) => {
     const c = Object.assign({}, this.config, config, {send_data})
     return await request('DELETE', path, c)
   }
