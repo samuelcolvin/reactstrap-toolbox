@@ -65,3 +65,13 @@ $toast-width: $toast-max-width !default;
 .cursor-pointer {
   cursor: pointer;
 }
+
+.hidden-input {
+  height: 0;
+  opacity: 0;
+  width: 0;
+  position: relative;
+  top: -2px;
+  padding: 0;
+  margin: auto;
+}

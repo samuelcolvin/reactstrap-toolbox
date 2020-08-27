@@ -6,6 +6,8 @@ import {
   CustomInput,
   FormText,
   FormFeedback,
+  ButtonGroup,
+  Button,
 } from 'reactstrap'
 import {as_title} from '../utils'
 
@@ -19,7 +21,7 @@ export const InputLabel = ({field, children}) => (
 )
 
 export const InputHelpText = ({field}) => (
-  field.help_text ? <FormText>{field.help_text} {field.required && <span>(required)</span>}</FormText> : null
+  field.help_text ? <FormText>{field.help_text}</FormText> : null
 )
 
 const placeholder = field => {
@@ -101,6 +103,34 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
   </FormGroup>
 )
 
+export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, stretch}) => (
+  <FormGroup className={className || field.className}>
+    <InputLabel field={field}/>
+    <div>
+      <ButtonGroup className={stretch ? 'w-100': ''}>
+        {field.choices && field.choices.map(prep_choice).map((c, i) => (
+          <Button key={i} onClick={() => onChange(c.value)} color={c.value === value ? 'primary' : 'secondary'}>
+            {c.label}
+          </Button>
+        ))}
+      </ButtonGroup>
+    </div>
+    <BsInput
+      className="hidden-input"
+      value={value || ''}
+      invalid={!!error}
+      disabled={disabled}
+      name={field.name}
+      id={field.name}
+      onChange={e => onChange(e.target.value)}
+      onBlur={e => onBlur(e.target.value)}
+      required={field.required}
+    />
+    {error && <FormFeedback>{error}</FormFeedback>}
+    <InputHelpText field={field}/>
+  </FormGroup>
+)
+
 export const InputInteger = props => (
   <InputGeneral {...props} custom_type="number" step="1" min={props.field.min} max={props.field.max}
                 onChange={v => props.onChange(v ? parseInt(v) : null)}/>
@@ -114,6 +144,7 @@ export const InputNumber = props => (
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
+  toggle: InputToggle,
   int: InputInteger,
   number: InputNumber,
 }
