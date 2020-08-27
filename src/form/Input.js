@@ -109,7 +109,8 @@ export const InputToggle = ({className, field, disabled, error, value, onChange,
     <div>
       <ButtonGroup className={stretch ? 'w-100': ''}>
         {field.choices && field.choices.map(prep_choice).map((c, i) => (
-          <Button key={i} onClick={() => onChange(c.value)} color={c.value === value ? 'primary' : 'secondary'}>
+          <Button key={i} disabled={disabled} onClick={() => onChange(c.value)}
+                  color={c.value === value ? 'primary' : 'secondary'}>
             {c.label}
           </Button>
         ))}

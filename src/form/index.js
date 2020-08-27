@@ -38,6 +38,7 @@ class _Form extends React.Component {
   }
 
   componentDidMount () {
+    this.mounted = true
     if (this.props.submit_initial && this.props.fields) {
       const form_data = {}
       for (const field_name of Object.keys(this.props.fields)) {
@@ -48,6 +49,10 @@ class _Form extends React.Component {
       }
       this.props.onChange(form_data)
     }
+  }
+
+  componentWillUnmount () {
+    this.mounted = false
   }
 
   form_id = () => this.props.id || 'rstb-form'
@@ -91,6 +96,8 @@ class _Form extends React.Component {
     } else {
       this.props.success_msg && this.props.ctx.setMessage(this.props.success_msg)
       this.props.onSubmit && this.props.onSubmit(r)
+      // if the form is still visible, it can be made editable again for future use
+      this.mounted && this.setState({disabled: false})
     }
   }
 
