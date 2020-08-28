@@ -152,7 +152,7 @@ class _Form extends React.Component {
     const className = this.props.highlight_required !== false ? 'highlight-required' : null
     return (
       <BootstrapForm onSubmit={this.submit} className={className} id={this.form_id()}>
-        <div className={this.props.form_body_class}>
+        <div className={this.props.form_body_class || 'rstb-form'}>
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
           <RenderFields fields={fields} RenderField={this.render_field}/>
         </div>

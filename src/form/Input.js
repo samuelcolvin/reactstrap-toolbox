@@ -103,11 +103,11 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
   </FormGroup>
 )
 
-export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, stretch}) => (
+export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field}/>
     <div>
-      <ButtonGroup className={stretch ? 'w-100': ''}>
+      <ButtonGroup>
         {field.choices && field.choices.map(prep_choice).map((c, i) => (
           <Button key={i} disabled={disabled} onClick={() => onChange(c.value)}
                   color={c.value === value ? 'primary' : 'secondary'}>
