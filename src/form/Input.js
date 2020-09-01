@@ -13,7 +13,7 @@ import {as_title} from '../utils'
 
 export const InputLabel = ({field, children}) => (
   field.show_label !== false ? (
-    <BsLabel for={field.name} className={field.required ? 'required' : ''}>
+    <BsLabel htmlFor={field.name} className={field.required ? 'required' : ''}>
      { children}
       {field.title}
     </BsLabel>
@@ -103,6 +103,31 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
   </FormGroup>
 )
 
+export const InputRadio = ({className, field, disabled, error, value, onChange, onBlur}) => (
+  <FormGroup className={className || field.className}>
+    <InputLabel field={field}/>
+    {field.choices && field.choices.map(prep_choice).map((c, i) => (
+      <div key={i} className="custom-control custom-radio">
+        <input type="radio"
+               className="custom-control-input"
+               checked={c.value === value}
+               disabled={disabled}
+               name={field.name}
+               id={`${field.name}-${c.value}`}
+               required={field.required}
+               onChange={() => onChange(c.value)}
+               onBlur={() => onBlur(c.value)}/>
+        <label className="custom-control-label" htmlFor={`${field.name}-${c.value}`}>
+          <span className="d-inline-block mr-1">{c.label.title || c.label}</span>
+          {c.label.description && <small className="text-muted">{c.label.description}</small>}
+        </label>
+     </div>
+    ))}
+    {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+    <InputHelpText field={field}/>
+  </FormGroup>
+)
+
 export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field}/>
@@ -146,6 +171,7 @@ const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
   toggle: InputToggle,
+  radio: InputRadio,
   int: InputInteger,
   number: InputNumber,
 }
