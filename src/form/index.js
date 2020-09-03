@@ -89,8 +89,9 @@ class _Form extends React.Component {
     }
     if (r.status >= 400) {
       const errors = {}
-      for (let e of (r.data.details || [])) {
-        errors[e.loc[0]] = e.msg
+      for (let e of (r.data.details || r.data.detail || [])) {
+        const k = e.loc[0] === 'body' ? e.loc[1] : e.loc[0]
+        errors[k] = e.msg
       }
       this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? null : 'Error occurred'})
     } else {

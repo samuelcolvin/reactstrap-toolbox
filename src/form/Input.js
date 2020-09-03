@@ -167,6 +167,12 @@ export const InputNumber = props => (
                 onChange={v => props.onChange(v ? parseFloat(v) : null)}/>
 )
 
+// placeholder is useful here to provide partial support for safari which doesn't support date inputs
+export const InputDate = props => (
+  <InputGeneral {...props} custom_type="date" min={props.field.min} max={props.field.max}
+                placeholder={props.field.placeholder || 'dd/mm/yyyy'}/>
+)
+
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
@@ -174,6 +180,7 @@ const INPUT_LOOKUP = {
   radio: InputRadio,
   int: InputInteger,
   number: InputNumber,
+  date: InputDate,
 }
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
