@@ -18,7 +18,7 @@ export function make_url (path) {
   }
 }
 
-export function build_query (args) {
+export function build_url (url, args) {
   const arg_list = []
   const add_arg = (n, v) => arg_list.push(encodeURIComponent(n) + '=' + encodeURIComponent(v))
   for (let [name, value] of Object.entries(args)) {
@@ -31,9 +31,10 @@ export function build_query (args) {
     }
   }
   if (arg_list.length > 0) {
-    return '?' + arg_list.join('&')
+    const split = url.includes('?') ? '&': '?'
+    return url + split + arg_list.join('&')
   }
-  return ''
+  return url
 }
 
 export function headers2obj (r) {
@@ -50,7 +51,7 @@ export async function request (method, path, config) {
 
   config = config || {}
   if (config.args) {
-    url += build_query(config.args)
+    url = build_url(url, config.args)
   }
 
   if (Number.isInteger(config.expected_status)) {

@@ -134,7 +134,7 @@ class _Form extends React.Component {
         field={field}
         value={value}
         error={this.errors[field.name]}
-        disabled={this.state.disabled || field.disabled}
+        disabled={this.state.disabled || field.disabled || this.props.disabled}
         onChange={v => this.setField(field.name, v)}
         type_lookup={this.props.type_lookup}
         onBlur={() => this.props.onBlur && this.props.onBlur(field.name)}
@@ -154,6 +154,7 @@ class _Form extends React.Component {
     return (
       <BootstrapForm onSubmit={this.submit} className={className} id={this.form_id()}>
         <div className={this.props.form_body_class || 'rstb-form'}>
+          {this.props.children}
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
           <RenderFields fields={fields} RenderField={this.render_field}/>
         </div>
@@ -170,11 +171,7 @@ export class StandaloneForm extends React.Component {
     this.state = {form_data: {}}
   }
 
-  setFormData = form_data => {
-    return new Promise(resolve => {
-      this.setState({form_data}, resolve)
-    })
-  }
+  setFormData = form_data => this.setState({form_data})
 
   render () {
     return <Form {...this.props} form_data={this.state.form_data} onChange={this.setFormData}/>
