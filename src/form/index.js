@@ -57,6 +57,16 @@ class _Form extends React.Component {
 
   form_id = () => this.props.id || 'rstb-form'
 
+  execute = data => {
+    if (this.props.execute) {
+      return this.props.execute(data)
+    } else if (this.props.endpoint) {
+      return window.requests.post(this.props.endpoint, data, {expected_status: [200, 201, 400, 409, 422, 470]})
+    } else {
+      throw Error('either "execute" or "endpoint" props must be set')
+    }
+  }
+
   submit = async e => {
     if (e) {
       // check it's this form that was submitted
@@ -83,7 +93,7 @@ class _Form extends React.Component {
       return
     }
     this.setState({disabled: true, errors: {}, form_error: null})
-    let r = await this.props.function(data)
+    let r = await this.execute(data)
     if (!r) {
       r = {status: 200}
     }
@@ -95,8 +105,7 @@ class _Form extends React.Component {
       }
       this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? null : 'Error occurred'})
     } else {
-      this.props.success_msg && this.props.ctx.setMessage(this.props.success_msg)
-      this.props.onSubmit && this.props.onSubmit(r)
+      this.props.afterSubmit && this.props.afterSubmit(r)
       // if the form is still visible, it can be made editable again for future use
       this.mounted && this.setState({disabled: false})
     }
@@ -147,16 +156,13 @@ class _Form extends React.Component {
     this.errors = {...this.state.errors, ...(this.props.errors || {})}
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
-
-    const fields = this.get_fields()
-
     const className = this.props.highlight_required !== false ? 'highlight-required' : null
     return (
       <BootstrapForm onSubmit={this.submit} className={className} id={this.form_id()}>
         <div className={this.props.form_body_class || 'rstb-form'}>
           {this.props.children}
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
-          <RenderFields fields={fields} RenderField={this.render_field}/>
+          <RenderFields fields={this.get_fields()} RenderField={this.render_field}/>
         </div>
         <Buttons state={this.state} form_props={this.props} setField={this.setField} submit={this.submit}/>
       </BootstrapForm>
@@ -165,16 +171,10 @@ class _Form extends React.Component {
 }
 export const Form = WithContext(_Form)
 
-export class StandaloneForm extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {form_data: {}}
-  }
+export const StandaloneForm = props => {
+  const [form_data, setFormData] = React.useState({})
 
-  setFormData = form_data => this.setState({form_data})
-
-  render () {
-    return <Form {...this.props} form_data={this.state.form_data} onChange={this.setFormData}/>
-  }
+  return <Form {...props} form_data={form_data} onChange={setFormData}/>
 }
+
 export const ModalForm = AsModal(StandaloneForm)

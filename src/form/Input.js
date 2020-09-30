@@ -43,7 +43,8 @@ export const InputGeneral = ({className, field, error, disabled, value, onChange
              name={field.name}
              id={field.name}
              required={field.required}
-             maxLength={field.max_length || 255}
+             maxLength={field.max_length}
+             minLength={field.min_length}
              placeholder={placeholder(field)}
              value={value || ''}
              onChange={e => onChange(e.target.value)}
