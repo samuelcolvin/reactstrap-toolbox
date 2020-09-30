@@ -61,7 +61,7 @@ class _Form extends React.Component {
     if (this.props.execute) {
       return this.props.execute(data)
     } else if (this.props.endpoint) {
-      if (!window.app || !window.app.request) {
+      if (!window.app || !window.app.requests) {
         throw Error('"window.app.requests" is not set')
       }
       return window.app.requests.post(this.props.endpoint, data, {expected_status: [200, 201, 400, 409, 422, 470]})
