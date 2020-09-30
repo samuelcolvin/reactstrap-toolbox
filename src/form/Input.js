@@ -45,6 +45,7 @@ export const InputGeneral = ({className, field, error, disabled, value, onChange
              required={field.required}
              maxLength={field.max_length}
              minLength={field.min_length}
+             autoComplete={field.autocomplete}
              placeholder={placeholder(field)}
              value={value || ''}
              onChange={e => onChange(e.target.value)}
@@ -92,6 +93,7 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
                  name={field.name}
                  id={field.name}
                  required={field.required}
+                 autoComplete={field.autocomplete}
                  onChange={e => onChange(e.target.value)}
                  onBlur={e => onBlur(e.target.value)}>
       {field.allow_empty !== false && <option value="">&mdash;</option>}
