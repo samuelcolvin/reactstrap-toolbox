@@ -81,20 +81,39 @@ export async function request (method, path, config) {
     on_error(e)
     throw e
   }
+
+  const get_json = async () => {
+    let body = null
+    const content_type = r.headers.get('content-type')
+    try {
+      body = await r.text()
+      if (content_type && content_type.toLowerCase().startsWith('application/json')) {
+        return JSON.parse(body)
+      } else {
+        throw Error(`Not a JSON response, Content-Type: "${content_type}"`)
+      }
+    } catch (error) {
+      const e = DetailedError(error.message, {error: error.toString(), status: r.status, url, init, body, content_type})
+      on_error(e)
+      throw e
+    }
+  }
+
   if (config.expected_status.includes(r.status)) {
     if (config.raw_response) {
       // e.g. you might want to use a stream and process one line of nd-json at a time or something
       return r
     } else {
       return {
-        data: await r.json(),
+        data: await get_json(),
         status: r.status,
+        response: r,
       }
     }
   } else {
     let response_data = {}
     try {
-      response_data = await r.json()
+      response_data = await get_json()
     } catch (e) {
       // ignore and use normal error
     }
