@@ -10,6 +10,7 @@ import {
   Button,
 } from 'reactstrap'
 import {as_title} from '../utils'
+import Recaptcha from '../Recaptcha'
 
 export const InputLabel = ({field, children}) => (
   field.show_label !== false ? (
@@ -22,6 +23,20 @@ export const InputLabel = ({field, children}) => (
 
 export const InputHelpText = ({field}) => (
   field.help_text ? <FormText>{field.help_text}</FormText> : null
+)
+
+const HiddenInput = ({field, disabled, error, value, onChange, onBlur}) => (
+  <BsInput
+    className="hidden-input"
+    value={value || ''}
+    invalid={!!error}
+    disabled={disabled}
+    name={field.name}
+    id={field.name}
+    onChange={e => onChange(e.target.value)}
+    onBlur={e => onBlur(e.target.value)}
+    required={field.required}
+  />
 )
 
 const placeholder = field => {
@@ -144,17 +159,7 @@ export const InputToggle = ({className, field, disabled, error, value, onChange,
         ))}
       </ButtonGroup>
     </div>
-    <BsInput
-      className="hidden-input"
-      value={value || ''}
-      invalid={!!error}
-      disabled={disabled}
-      name={field.name}
-      id={field.name}
-      onChange={e => onChange(e.target.value)}
-      onBlur={e => onBlur(e.target.value)}
-      required={field.required}
-    />
+    <HiddenInput field={field} disabled={disabled} error={error} value={value} onChange={onChange} onBlur={onBlur}/>
     {error && <FormFeedback>{error}</FormFeedback>}
     <InputHelpText field={field}/>
   </FormGroup>
@@ -176,6 +181,14 @@ export const InputDate = props => (
                 placeholder={props.field.placeholder || 'dd/mm/yyyy'}/>
 )
 
+export const RecaptchaInput = ({className, field, error, onChange}) => (
+  <FormGroup className={className || field.className}>
+    <Recaptcha onChange={onChange} element_id={field.name}/>
+    {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+    <InputHelpText field={field}/>
+  </FormGroup>
+)
+
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
@@ -184,6 +197,7 @@ const INPUT_LOOKUP = {
   int: InputInteger,
   number: InputNumber,
   date: InputDate,
+  recaptcha: RecaptchaInput,
 }
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
