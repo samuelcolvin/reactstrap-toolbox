@@ -84,18 +84,14 @@ export async function request (method, path, config) {
 
   const get_json = async () => {
     let body = null
-    const content_type = r.headers.get('content-type')
     try {
       body = await r.text()
-      if (content_type && content_type.toLowerCase().startsWith('application/json')) {
-        return JSON.parse(body)
-      } else {
-        throw Error(`Not a JSON response, Content-Type: "${content_type}"`)
-      }
+      return JSON.parse(body)
     } catch (error) {
-      const e = DetailedError(error.message, {error: error.toString(), status: r.status, url, init, body, content_type})
-      on_error(e)
-      throw e
+      throw DetailedError(
+        error.message,
+        {error: error.toString(), status: r.status, url, init, body, headers: headers2obj(r)},
+      )
     }
   }
 
@@ -104,8 +100,15 @@ export async function request (method, path, config) {
       // e.g. you might want to use a stream and process one line of nd-json at a time or something
       return r
     } else {
+      let data
+      try {
+        data = await get_json()
+      } catch (error) {
+        on_error(error)
+        throw error
+      }
       return {
-        data: await get_json(),
+        data,
         status: r.status,
         response: r,
       }
