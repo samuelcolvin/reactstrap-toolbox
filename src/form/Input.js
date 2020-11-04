@@ -181,13 +181,71 @@ export const InputDate = props => (
                 placeholder={props.field.placeholder || 'dd/mm/yyyy'}/>
 )
 
-export const RecaptchaInput = ({className, field, error, onChange}) => (
+export const InputRecaptcha = ({className, field, error, onChange}) => (
   <FormGroup className={className || field.className}>
     <Recaptcha onChange={onChange} element_id={field.name}/>
     {error && <FormFeedback className="d-block">{error}</FormFeedback>}
     <InputHelpText field={field}/>
   </FormGroup>
 )
+
+const ab2base64 = ab => btoa(String.fromCharCode(...new Uint8Array(ab)))
+
+export const InputFile = ({className, field, error, disabled, onChange}) => {
+  const [filename, setFilename] = React.useState(null)
+  const [local_error, setError] = React.useState(null)
+
+  const onFileChange = e => {
+    const file = e.target.files[0]
+    setFilename(file.name)
+    if (field.file_types && !field.file_types.includes(file.type)) {
+      setError(`Unexpected file type ${file.type}, expected ${field.file_types.join(', ')}`)
+      onChange(null)
+    } else {
+      setError(null)
+      const reader = new FileReader()
+      const f = {name: file.name, last_modified: file.lastModified}
+      if (field.binary_data) {
+        reader.onload = () => onChange({...f, content: ab2base64(reader.result)})
+        reader.readAsArrayBuffer(file)
+      } else {
+        reader.onload = () => onChange({...f, content: reader.result})
+        reader.readAsText(file)
+      }
+    }
+  }
+
+  if (local_error) {
+    if (error) {
+      error += ', ' + local_error
+    } else {
+      error = local_error
+    }
+  }
+
+  return (
+    <FormGroup className={className || field.className}>
+      <InputLabel field={field}/>
+      <div className="custom-file">
+        <BsInput
+          type="file"
+          className="custom-file-input"
+          invalid={!!error}
+          disabled={disabled}
+          name={field.name}
+          id={field.name}
+          required={field.required}
+          onChange={e => onFileChange(e)}
+        />
+        <label className="custom-file-label" htmlFor={field.name}>
+          {filename || placeholder(field) || 'Choose file...'}
+        </label>
+      </div>
+      {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+      <InputHelpText field={field}/>
+    </FormGroup>
+  )
+}
 
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
@@ -197,7 +255,8 @@ const INPUT_LOOKUP = {
   int: InputInteger,
   number: InputNumber,
   date: InputDate,
-  recaptcha: RecaptchaInput,
+  recaptcha: InputRecaptcha,
+  file: InputFile,
 }
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
