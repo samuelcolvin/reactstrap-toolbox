@@ -3,26 +3,17 @@ import {Spinner} from 'reactstrap'
 import {withRouter} from 'react-router-dom'
 import {combine_classes} from './utils'
 
-export const Error = ({error, className}) => {
-  if (error.status === 404) {
-    return <NotFound className={className} url={error.url}/>
-  } else {
-    return (
-      <div className={combine_classes(className, 'error')}>
-        <h1>Error</h1>
-        <p>
-          {error.status ? <span>{error.status}: </span> : null}
-          {error.message ? error.message : error.toString()}.
-        </p>
-      </div>
-    )
-  }
-}
+export const Error = ({error, className}) => (
+  <div className={combine_classes(className, 'error')}>
+    <h1>Error</h1>
+    <p>{error.message || error.toString()}</p>
+  </div>
+)
 
 export const NotFound = withRouter(({url, children, location, className}) => (
   <div className={combine_classes(className, 'not-found')}>
     <h1>Page not found</h1>
-    <p>The page <code>{url || location.pathname}</code> does not exist.</p>
+    <p>The page "{url || location.pathname}" does not exist.</p>
     {children}
   </div>
 ))

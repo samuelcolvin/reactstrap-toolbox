@@ -77,7 +77,7 @@ export async function request (method, path, config) {
     r = await fetch(url, init)
   } catch (error) {
     // generally TypeError: failed to fetch
-    const e = DetailedError(error.message, {error: error.toString(), status: 0, url, init})
+    const e = DetailedError(error.message, {error, status: 0, url, init})
     on_error(e)
     throw e
   }
@@ -90,7 +90,7 @@ export async function request (method, path, config) {
     } catch (error) {
       throw DetailedError(
         error.message,
-        {error: error.toString(), status: r.status, url, init, body, headers: headers2obj(r)},
+        {error, status: r.status, url, init, body, headers: headers2obj(r)},
       )
     }
   }
@@ -119,10 +119,11 @@ export async function request (method, path, config) {
       response_data = await get_json()
     } catch (e) {
       // ignore and use normal error
+      response_data = e.details.body
     }
-    let message = `Unexpected response ${r.status}`
+    let message = `Unexpected response ${r.status} from "${url}"`
     if (response_data.message) {
-      message += ` response message: ${response_data.message}`
+      message += `, response message: ${response_data.message}`
     }
     const e = DetailedError(message, {status: r.status, url, init, response_data, headers: headers2obj(r)})
     on_error(e)
