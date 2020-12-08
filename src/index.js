@@ -16,5 +16,6 @@ export {
   InputInteger,
   InputNumber,
   InputWrapper,
+  InputToggle,
 } from './form/Input'
 export {Form, StandaloneForm, ModalForm} from './form'
