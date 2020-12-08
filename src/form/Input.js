@@ -155,7 +155,7 @@ export const InputRadio = ({className, field, disabled, error, value, onChange, 
   </FormGroup>
 )
 
-export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, extraButton}) => (
+export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, children}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field} />
     <div>
@@ -171,11 +171,7 @@ export const InputToggle = ({className, field, disabled, error, value, onChange,
               {c.label}
             </Button>
           ))}
-        {extraButton && (
-          <Button onClick={extraButton.onClick} color={extraButton.selected ? 'primary' : 'secondary'}>
-            {extraButton.label}
-          </Button>
-        )}
+        {children}
       </ButtonGroup>
     </div>
     <HiddenInput field={field} disabled={disabled} error={error} value={value} onChange={onChange} onBlur={onBlur} />
