@@ -75,3 +75,26 @@ $toast-width: $toast-max-width !default;
   padding: 0;
   margin: auto;
 }
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.btn-cog {
+  padding-left: 40px;
+  padding-right: 12px;
+  .cog-loading {
+    opacity: 0;
+    margin-left: 4px;
+    animation: rotation 2s infinite linear;
+    transition: opacity 800ms;
+  }
+  &:disabled .cog-loading {
+    opacity: 1;
+  }
+}

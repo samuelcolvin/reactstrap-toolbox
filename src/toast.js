@@ -67,7 +67,7 @@ class ToastMessage extends React.Component {
     const classes = ['toast-msg']
     this.state.closing && classes.push('t-closing')
     this.props.onClick && classes.push('cursor-pointer')
-    this.props.className && classes.push(this.this.props.className)
+    this.props.className && classes.push(this.props.className)
     return (
       <div className={classes.join(' ')} onClick={this.onClick}>
         <Toast onMouseEnter={() => this.set_hover(true)} onMouseLeave={() => this.set_hover(false)}>

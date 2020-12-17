@@ -3,6 +3,8 @@ import {Button, ButtonGroup, Form as BootstrapForm} from 'reactstrap'
 import {AsModal} from '../Modal'
 import {InputWrapper} from './Input'
 import {WithContext} from '../context'
+import {faCog} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const DefaultRenderFields = ({fields, RenderField}) => (
   Object.values(fields).map(field => <RenderField key={field.name} field={field}/>)
@@ -19,8 +21,9 @@ const DefaultFormButtons = ({state, form_props}) => (
           {form_props.cancel_label || 'Cancel'}
         </Button>
       ) : null}
-      <Button type="submit" color="primary" disabled={state.disabled}>
+      <Button type="submit" color="primary" disabled={state.disabled} className="btn-cog">
         {form_props.save_label || 'Save'}
+        <FontAwesomeIcon icon={faCog} className="cog-loading fa-fw" />
       </Button>
     </ButtonGroup>
   </div>
@@ -161,6 +164,7 @@ class _Form extends React.Component {
     const RenderFields = this.props.RenderFields || DefaultRenderFields
     const Buttons = this.props.Buttons || DefaultFormButtons
     const className = this.props.highlight_required !== false ? 'highlight-required' : null
+    const BeforeButtons = this.props.BeforeButtons || null
     return (
       <BootstrapForm onSubmit={this.submit} className={className} id={this.form_id()}>
         <div className={this.props.form_body_class || 'rstb-form'}>
@@ -168,6 +172,7 @@ class _Form extends React.Component {
           <div className="form-error text-right">{this.props.form_error || this.state.form_error}</div>
           <RenderFields fields={this.get_fields()} RenderField={this.render_field}/>
         </div>
+        {BeforeButtons && <BeforeButtons form_state={this.state} form_props={this.props}/>}
         <Buttons state={this.state} form_props={this.props} setField={this.setField} submit={this.submit}/>
       </BootstrapForm>
     )

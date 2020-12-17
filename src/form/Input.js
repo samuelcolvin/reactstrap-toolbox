@@ -22,7 +22,7 @@ export const InputLabel = ({field, children}) =>
 
 export const InputHelpText = ({field}) => (field.help_text ? <FormText>{field.help_text}</FormText> : null)
 
-const HiddenInput = ({field, disabled, error, value, onChange, onBlur}) => (
+export const HiddenInput = ({field, disabled, error, value, onChange, onBlur}) => (
   <BsInput
     className="hidden-input"
     value={value || ''}
