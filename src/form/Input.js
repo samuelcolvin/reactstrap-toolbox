@@ -89,7 +89,7 @@ export const InputCheckbox = ({className, field, disabled, value, onChange, onBl
   </FormGroup>
 )
 
-function prep_choice(c) {
+function prep_choice (c) {
   if (typeof c === 'string') {
     c = {value: c}
   }
@@ -126,6 +126,50 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
     <InputHelpText field={field} />
   </FormGroup>
 )
+
+export const InputCheckboxMultiple = ({className, field, disabled, value, onChange, onBlur, error}) => {
+  const selected = new Set(value || [])
+  const onSingleChange = key => {
+    if (!selected.delete(key)) {
+      selected.add(key)
+    }
+    onChange([...selected])
+  }
+  return (
+    <FormGroup className={className || field.className || 'checkbox-multiple'}>
+      <InputLabel field={field} />
+      {field.choices &&
+        field.choices.map(prep_choice).map((c, i) => (
+          <div key={i} className="form-check">
+            <BsLabel htmlFor={`${field.name}-${c.value}`}>
+                <BsInput
+                  type="checkbox"
+                  label={c.label}
+                  disabled={disabled}
+                  name={`${field.name}-${c.value}`}
+                  id={`${field.name}-${c.value}`}
+                  checked={selected.has(c.value)}
+                  onChange={() => onSingleChange(c.value)}
+                  onBlur={e => onBlur(e.target.checked)}
+                />
+                {c.label}
+            </BsLabel>
+          </div>
+        ))}
+      <BsInput
+        className="hidden-input"
+        value={selected.size ? 'set' : ''}
+        invalid={!!error}
+        disabled={disabled}
+        name={field.name}
+        id={field.name}
+        required={field.required}
+      />
+      <InputHelpText field={field} />
+      {error && <FormFeedback>{error}</FormFeedback>}
+    </FormGroup>
+  )
+}
 
 export const InputRadio = ({className, field, disabled, error, value, onChange, onBlur}) => (
   <FormGroup className={className || field.className}>
@@ -282,6 +326,7 @@ export const InputFile = ({className, field, error, disabled, onChange}) => {
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
+  checkboxes: InputCheckboxMultiple,
   toggle: InputToggle,
   radio: InputRadio,
   int: InputInteger,
