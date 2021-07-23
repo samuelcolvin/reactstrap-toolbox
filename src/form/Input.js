@@ -24,9 +24,10 @@ export const InputLabel = ({field, children}) =>
 
 export const InputHelpText = ({field}) => (field.help_text ? <FormText>{field.help_text}</FormText> : null)
 
-export const HiddenInput = ({field, disabled, error, value, onChange, onBlur}) => (
+// used when a field is needed for html form validation but it should not be shown
+export const InvisibleInput = ({field, disabled, error, value, onChange, onBlur}) => (
   <BsInput
-    className="hidden-input"
+    className="invisible-input"
     value={value || ''}
     invalid={!!error}
     disabled={disabled}
@@ -221,7 +222,7 @@ export const InputToggle = ({className, field, disabled, error, value, onChange,
         {children}
       </ButtonGroup>
     </div>
-    <HiddenInput field={field} disabled={disabled} error={error} value={value} onChange={onChange} onBlur={onBlur} />
+    <InvisibleInput field={field} disabled={disabled} error={error} value={value} onChange={onChange} onBlur={onBlur} />
     {error && <FormFeedback>{error}</FormFeedback>}
     <InputHelpText field={field} />
   </FormGroup>
@@ -396,6 +397,21 @@ export const InputFile = ({className, field, error, disabled, onChange}) => {
   )
 }
 
+export const HiddenInput = ({field, error, value, onChange}) => (
+  <>
+    <BsInput
+      type="hidden"
+      value={value || ''}
+      invalid={!!error}
+      name={field.name}
+      id={field.name}
+      onChange={e => onChange(e.target.value)}
+      required={field.required}
+    />
+    {error && <FormFeedback>{as_title(field.name)}: {error}</FormFeedback>}
+  </>
+)
+
 const INPUT_LOOKUP = {
   bool: InputCheckbox,
   select: InputSelect,
@@ -409,6 +425,7 @@ const INPUT_LOOKUP = {
   datetime: InputDatetime,
   recaptcha: InputRecaptcha,
   file: InputFile,
+  hidden: HiddenInput,
 }
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {

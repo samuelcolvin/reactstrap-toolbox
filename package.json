@@ -1,6 +1,6 @@
 {
   "name": "reactstrap-toolbox",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "description": "Tools for react and reactstrap",
   "main": "lib/index.js",
   "repository": "https://github.com/samuelcolvin/reactstrap-toolbox",
