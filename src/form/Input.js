@@ -8,6 +8,8 @@ import {
   FormFeedback,
   ButtonGroup,
   Button,
+  Row,
+  Col,
 } from 'reactstrap'
 import {as_title} from '../utils'
 import Recaptcha from '../Recaptcha'
@@ -164,6 +166,7 @@ export const InputCheckboxMultiple = ({className, field, disabled, value, onChan
         name={field.name}
         id={field.name}
         required={field.required}
+        onChange={() => null}
       />
       <InputHelpText field={field} />
       {error && <FormFeedback>{error}</FormFeedback>}
@@ -246,6 +249,9 @@ export const InputNumber = props => (
   />
 )
 
+const date_placeholder = 'dd/mm/yyyy'
+const date_pattern = '([0-2]\\d|30|31)/(0\\d|10|11|12)/(19|20)\\d{2}'
+
 // placeholder is useful here to provide partial support for safari which doesn't support date inputs
 export const InputDate = props => (
   <InputGeneral
@@ -253,9 +259,76 @@ export const InputDate = props => (
     custom_type="date"
     min={props.field.min}
     max={props.field.max}
-    placeholder={props.field.placeholder || 'dd/mm/yyyy'}
+    placeholder={props.field.placeholder || date_placeholder}
+    pattern={props.field.pattern || date_pattern}
   />
 )
+
+const time_placeholder = 'HH:MM'
+const time_pattern = '([01]\\d|2[0-3])-[0-5]\\d'
+
+export const InputTime = props => (
+  <InputGeneral
+    {...props}
+    custom_type="time"
+    min={props.field.min}
+    max={props.field.max}
+    placeholder={props.field.placeholder || time_placeholder}
+    pattern={props.field.pattern || time_pattern}
+  />
+)
+
+export const InputDatetime = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => {
+  const [date, time] = value ? value.split('T') : ['', '']
+
+  return (
+    <FormGroup className={className || field.className}>
+      <InputLabel field={field} />
+      <Row>
+        <Col>
+          <BsInput
+            type="date"
+            min={field.min}
+            max={field.max}
+            placeholder={field.placeholder || date_placeholder}
+            pattern={field.pattern || date_pattern}
+            className={field.inputClassName}
+            invalid={!!error}
+            disabled={disabled}
+            name={`${field.name}-date`}
+            id={`${field.name}-date`}
+            required={field.required}
+            autoComplete={field.autocomplete}
+            value={date}
+            onChange={e => onChange(`${e.target.value}T${time}`)}
+            onBlur={e => onBlur(e.target.value)}
+            {...extra}
+          />
+        </Col>
+        <Col>
+          <BsInput
+            type="time"
+            placeholder={field.placeholder || time_placeholder}
+            pattern={field.pattern || time_pattern}
+            className={field.inputClassName}
+            invalid={!!error}
+            disabled={disabled}
+            name={`${field.name}-time`}
+            id={`${field.name}-time`}
+            required={field.required}
+            autoComplete={field.autocomplete}
+            value={time}
+            onChange={e => onChange(`${date}T${e.target.value}`)}
+            onBlur={e => onBlur(e.target.value)}
+            {...extra}
+          />
+        </Col>
+      </Row>
+      {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+      <InputHelpText field={field} />
+    </FormGroup>
+  )
+}
 
 export const InputRecaptcha = ({className, field, error, onChange}) => (
   <FormGroup className={className || field.className}>
@@ -332,6 +405,8 @@ const INPUT_LOOKUP = {
   int: InputInteger,
   number: InputNumber,
   date: InputDate,
+  time: InputTime,
+  datetime: InputDatetime,
   recaptcha: InputRecaptcha,
   file: InputFile,
 }

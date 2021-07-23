@@ -1,7 +1,7 @@
 export {GlobalContext, WithContext} from './context'
 export {Error, NotFound, Loading} from './Errors'
 export {AsModal} from './Modal'
-export {make_url, build_query, headers2obj, request, Requests} from './requests'
+export {make_url, build_url, headers2obj, request, Requests} from './requests'
 export {confirm_modal, choice_modal} from './confirm'
 export {message_toast} from './toast'
 export {Notify} from './notify'
