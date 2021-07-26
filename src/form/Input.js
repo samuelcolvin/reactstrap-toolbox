@@ -8,8 +8,7 @@ import {
   FormFeedback,
   ButtonGroup,
   Button,
-  Row,
-  Col,
+  InputGroup,
 } from 'reactstrap'
 import {as_title} from '../utils'
 import Recaptcha from '../Recaptcha'
@@ -159,15 +158,13 @@ export const InputCheckboxMultiple = ({className, field, disabled, value, onChan
             </BsLabel>
           </div>
         ))}
-      <BsInput
-        className="hidden-input"
-        value={selected.size ? 'set' : ''}
-        invalid={!!error}
+      <InvisibleInput
+        field={field}
         disabled={disabled}
-        name={field.name}
-        id={field.name}
-        required={field.required}
-        onChange={() => null}
+        error={error}
+        value={(value || []).join(',')}
+        onChange={onChange}
+        onBlur={onBlur}
       />
       <InputHelpText field={field} />
       {error && <FormFeedback>{error}</FormFeedback>}
@@ -285,46 +282,42 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
   return (
     <FormGroup className={className || field.className}>
       <InputLabel field={field} />
-      <Row>
-        <Col>
-          <BsInput
-            type="date"
-            min={field.min}
-            max={field.max}
-            placeholder={field.placeholder || date_placeholder}
-            pattern={field.pattern || date_pattern}
-            className={field.inputClassName}
-            invalid={!!error}
-            disabled={disabled}
-            name={`${field.name}-date`}
-            id={`${field.name}-date`}
-            required={field.required}
-            autoComplete={field.autocomplete}
-            value={date}
-            onChange={e => onChange(`${e.target.value}T${time}`)}
-            onBlur={e => onBlur(e.target.value)}
-            {...extra}
-          />
-        </Col>
-        <Col>
-          <BsInput
-            type="time"
-            placeholder={field.placeholder || time_placeholder}
-            pattern={field.pattern || time_pattern}
-            className={field.inputClassName}
-            invalid={!!error}
-            disabled={disabled}
-            name={`${field.name}-time`}
-            id={`${field.name}-time`}
-            required={field.required}
-            autoComplete={field.autocomplete}
-            value={time}
-            onChange={e => onChange(`${date}T${e.target.value}`)}
-            onBlur={e => onBlur(e.target.value)}
-            {...extra}
-          />
-        </Col>
-      </Row>
+      <InputGroup>
+        <BsInput
+          type="date"
+          min={field.min}
+          max={field.max}
+          placeholder={field.placeholder || date_placeholder}
+          pattern={field.pattern || date_pattern}
+          className={field.inputClassName}
+          invalid={!!error}
+          disabled={disabled}
+          name={`${field.name}-date`}
+          id={`${field.name}-date`}
+          required={field.required}
+          autoComplete={field.autocomplete}
+          value={date}
+          onChange={e => onChange(`${e.target.value}T${time}`)}
+          onBlur={e => onBlur(e.target.value)}
+          {...extra}
+        />
+        <BsInput
+          type="time"
+          placeholder={field.placeholder || time_placeholder}
+          pattern={field.pattern || time_pattern}
+          className={field.inputClassName}
+          invalid={!!error}
+          disabled={disabled}
+          name={`${field.name}-time`}
+          id={`${field.name}-time`}
+          required={field.required}
+          autoComplete={field.autocomplete}
+          value={time}
+          onChange={e => onChange(`${date}T${e.target.value}`)}
+          onBlur={e => onBlur(e.target.value)}
+          {...extra}
+        />
+      </InputGroup>
       {error && <FormFeedback className="d-block">{error}</FormFeedback>}
       <InputHelpText field={field} />
     </FormGroup>
