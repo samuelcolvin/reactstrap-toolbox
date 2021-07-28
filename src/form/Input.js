@@ -326,7 +326,7 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
 
 export const InputRecaptcha = ({className, field, value, error, onChange}) => {
   React.useEffect(() => {
-    if (value === null && window.grecaptcha) {
+    if (!value && window.grecaptcha) {
       window.grecaptcha.reset()
     }
   }, [value])
