@@ -5,7 +5,7 @@ const load_callback = 'recaptcha_load_callback'
 const click_callback = 'recaptcha_click_callback'
 
 
-export default ({onChange, className, element_id='google-recaptcha'}) => {
+export const Recaptcha = ({onChange, className, element_id='google-recaptcha'}) => {
   window[click_callback] = r => {
     if (onChange) {
       onChange(r)

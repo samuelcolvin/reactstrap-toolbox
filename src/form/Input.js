@@ -11,7 +11,7 @@ import {
   InputGroup,
 } from 'reactstrap'
 import {as_title} from '../utils'
-import Recaptcha from '../Recaptcha'
+import {Recaptcha} from '../Recaptcha'
 
 export const InputLabel = ({field, children}) =>
   field.show_label !== false ? (
@@ -324,13 +324,21 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
   )
 }
 
-export const InputRecaptcha = ({className, field, error, onChange}) => (
-  <FormGroup className={className || field.className}>
-    <Recaptcha onChange={onChange} element_id={field.name} />
-    {error && <FormFeedback className="d-block">{error}</FormFeedback>}
-    <InputHelpText field={field} />
-  </FormGroup>
-)
+export const InputRecaptcha = ({className, field, value, error, onChange}) => {
+  React.useEffect(() => {
+    if (value === null && window.grecaptcha) {
+      window.grecaptcha.reset()
+    }
+  }, [value])
+
+  return (
+    <FormGroup className={className || field.className}>
+      <Recaptcha onChange={onChange} element_id={field.name} />
+      {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+      <InputHelpText field={field} />
+    </FormGroup>
+  )
+}
 
 const ab2base64 = ab => btoa(String.fromCharCode(...new Uint8Array(ab)))
 
