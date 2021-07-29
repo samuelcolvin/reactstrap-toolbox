@@ -72,7 +72,7 @@ export const InputGeneral = ({className, field, error, disabled, value, onChange
   </FormGroup>
 )
 
-export const InputCheckbox = ({className, field, disabled, value, onChange, onBlur}) => (
+export const InputCheckbox = ({className, field, disabled, value, onChange, onBlur, ...extra}) => (
   <FormGroup className={className || field.className || 'py-2'} check>
     <InputLabel field={field}>
       <BsInput
@@ -85,6 +85,7 @@ export const InputCheckbox = ({className, field, disabled, value, onChange, onBl
         checked={value || false}
         onChange={e => onChange(e.target.checked)}
         onBlur={e => onBlur(e.target.checked)}
+        {...extra}
       />
     </InputLabel>
     <InputHelpText field={field} />
@@ -101,7 +102,7 @@ function prep_choice (c) {
   return {value: c.value, label: c.label || as_title(c.value)}
 }
 
-export const InputSelect = ({className, field, disabled, error, value, onChange, onBlur}) => (
+export const InputSelect = ({className, field, disabled, error, value, onChange, onBlur, ...extra}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field} />
     <CustomInput
@@ -115,6 +116,7 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
       autoComplete={field.autocomplete}
       onChange={e => onChange(e.target.value)}
       onBlur={e => onBlur(e.target.value)}
+      {...extra}
     >
       {field.allow_empty !== false && <option value="">&mdash;</option>}
       {field.choices &&
@@ -129,7 +131,7 @@ export const InputSelect = ({className, field, disabled, error, value, onChange,
   </FormGroup>
 )
 
-export const InputCheckboxMultiple = ({className, field, disabled, value, onChange, onBlur, error}) => {
+export const InputCheckboxMultiple = ({className, field, disabled, value, onChange, onBlur, error, ...extra}) => {
   const selected = new Set(value || [])
   const onSingleChange = key => {
     if (!selected.delete(key)) {
@@ -153,6 +155,7 @@ export const InputCheckboxMultiple = ({className, field, disabled, value, onChan
                   checked={selected.has(c.value)}
                   onChange={() => onSingleChange(c.value)}
                   onBlur={e => onBlur(e.target.checked)}
+                  {...extra}
                 />
                 {c.label}
             </BsLabel>
@@ -172,7 +175,7 @@ export const InputCheckboxMultiple = ({className, field, disabled, value, onChan
   )
 }
 
-export const InputRadio = ({className, field, disabled, error, value, onChange, onBlur}) => (
+export const InputRadio = ({className, field, disabled, error, value, onChange, onBlur, ...extra}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field} />
     {field.choices &&
@@ -188,6 +191,7 @@ export const InputRadio = ({className, field, disabled, error, value, onChange, 
             required={field.required}
             onChange={() => onChange(c.value)}
             onBlur={() => onBlur(c.value)}
+            {...extra}
           />
           <label className="custom-control-label" htmlFor={`${field.name}-${c.value}`}>
             <span className="d-inline-block mr-1">{c.label.title || c.label}</span>
@@ -200,7 +204,7 @@ export const InputRadio = ({className, field, disabled, error, value, onChange, 
   </FormGroup>
 )
 
-export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, children}) => (
+export const InputToggle = ({className, field, disabled, error, value, onChange, onBlur, children, ...extra}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field} />
     <div>
@@ -212,6 +216,7 @@ export const InputToggle = ({className, field, disabled, error, value, onChange,
               disabled={disabled}
               onClick={() => onChange(c.value)}
               color={c.value === value ? 'primary' : 'secondary'}
+              {...extra}
             >
               {c.label}
             </Button>
@@ -342,7 +347,7 @@ export const InputRecaptcha = ({className, field, value, error, onChange}) => {
 
 const ab2base64 = ab => btoa(String.fromCharCode(...new Uint8Array(ab)))
 
-export const InputFile = ({className, field, error, disabled, onChange}) => {
+export const InputFile = ({className, field, error, disabled, onChange, ...extra}) => {
   const [filename, setFilename] = React.useState(null)
   const [local_error, setError] = React.useState(null)
 
@@ -387,6 +392,7 @@ export const InputFile = ({className, field, error, disabled, onChange}) => {
           id={field.name}
           required={field.required}
           onChange={e => onFileChange(e)}
+          {...extra}
         />
         <label className="custom-file-label" htmlFor={field.name}>
           {filename || placeholder(field) || 'Choose file...'}
@@ -398,7 +404,7 @@ export const InputFile = ({className, field, error, disabled, onChange}) => {
   )
 }
 
-export const HiddenInput = ({field, error, value, onChange}) => (
+export const HiddenInput = ({field, error, value, onChange, ...extra}) => (
   <>
     <BsInput
       type="hidden"
@@ -408,6 +414,7 @@ export const HiddenInput = ({field, error, value, onChange}) => (
       id={field.name}
       onChange={e => onChange(e.target.value)}
       required={field.required}
+      {...extra}
     />
     {error && <FormFeedback>{as_title(field.name)}: {error}</FormFeedback>}
   </>
@@ -432,6 +439,22 @@ const INPUT_LOOKUP = {
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
   const InputComp = (type_lookup && type_lookup[field.type]) || INPUT_LOOKUP[field.type] || InputGeneral
 
+  const {focus} = field
+  const inputRef = React.createRef()
+  React.useEffect(() => {
+    if (focus && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [focus, inputRef])
+
+
   field.title = field.title || as_title(field.name)
-  return <InputComp field={field} value={[null, undefined].includes(value) ? field.default : value} {...props} />
+  return (
+    <InputComp
+      field={field}
+      value={[null, undefined].includes(value) ? field.default : value}
+      innerRef={inputRef}
+      {...props}
+    />
+  )
 }

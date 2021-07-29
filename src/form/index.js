@@ -10,7 +10,7 @@ const DefaultRenderFields = ({fields, RenderField}) => (
   Object.values(fields).map(field => <RenderField key={field.name} field={field}/>)
 )
 
-const DefaultFormButtons = ({state, form_props}) => (
+const DefaultFormButtons = ({state, form_props, submitButtonRef}) => (
   <div className={form_props.form_footer_class || 'text-right'}>
     <ButtonGroup>
       {form_props.onCancel ? (
@@ -21,7 +21,7 @@ const DefaultFormButtons = ({state, form_props}) => (
           {form_props.cancel_label || 'Cancel'}
         </Button>
       ) : null}
-      <Button type="submit" color="primary" disabled={state.disabled} className="btn-cog">
+      <Button type="submit" color="primary" disabled={state.disabled} className="btn-cog" innerRef={submitButtonRef}>
         {form_props.save_label || 'Save'}
         <FontAwesomeIcon icon={faCog} className="cog-loading fa-fw" />
       </Button>
@@ -174,7 +174,13 @@ class _Form extends React.Component {
           <RenderFields fields={this.get_fields()} RenderField={this.render_field}/>
         </div>
         {BeforeButtons && <BeforeButtons form_state={this.state} form_props={this.props}/>}
-        <Buttons state={this.state} form_props={this.props} setField={this.setField} submit={this.submit}/>
+        <Buttons
+          state={this.state}
+          form_props={this.props}
+          setField={this.setField}
+          submit={this.submit}
+          submitButtonRef={this.props.submitButtonRef}
+        />
       </BootstrapForm>
     )
   }
