@@ -85,7 +85,7 @@ class _Form extends React.Component {
     if (this.props.errors && Object.values(this.props.errors).some(v => v)) {
       return
     }
-    if (Object.keys(data).length === 0) {
+    if (Object.keys(data).length === 0 && !this.props.allow_empty) {
       this.setState({form_error: 'No data entered'})
       return
     }

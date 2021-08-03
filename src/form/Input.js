@@ -347,7 +347,7 @@ export const InputRecaptcha = ({className, field, value, error, onChange}) => {
 
 const ab2base64 = ab => btoa(String.fromCharCode(...new Uint8Array(ab)))
 
-export const InputFile = ({className, field, error, disabled, onChange, ...extra}) => {
+export const InputFile = ({className, field, error, disabled, onChange, value, ...extra}) => {
   const [filename, setFilename] = React.useState(null)
   const [local_error, setError] = React.useState(null)
 
