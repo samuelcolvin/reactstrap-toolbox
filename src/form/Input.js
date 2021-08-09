@@ -281,8 +281,31 @@ export const InputTime = props => (
   />
 )
 
+const pad_no = number => number.toString().padStart(2, '0')
+// note that getTimezoneOffset is the opposite way around from normal timezone offsets
+// e.g. BST gives getTimezoneOffset() -> -60
+const display_offset = ofs => `${ofs > 0 ? '-' : '+'}${pad_no(Math.abs(ofs) / 60)}:${pad_no(ofs % 60)}`
+
 export const InputDatetime = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => {
-  const [date, time] = value ? value.split('T') : ['', '']
+  let [date, time] = ['', '']
+  if (value) {
+    const m = value.match(/([^T]*)T([^+-]*)/)
+    if (m) {
+      [, date, time] = m
+    }
+  }
+
+  const update = (date_, time_) => {
+    date_ = date_ || date
+    time_ = time_ || time
+    const ts_string = `${date_}T${time_}`
+    const ts = new Date(Date.parse(ts_string))
+    if (isNaN(ts.getTime())) {
+      onChange(ts_string)
+    } else {
+      onChange(ts_string + display_offset(ts.getTimezoneOffset()))
+    }
+  }
 
   return (
     <FormGroup className={className || field.className}>
@@ -302,7 +325,7 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
           required={field.required}
           autoComplete={field.autocomplete}
           value={date}
-          onChange={e => onChange(`${e.target.value}T${time}`)}
+          onChange={e => update(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
         />
@@ -318,7 +341,7 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
           required={field.required}
           autoComplete={field.autocomplete}
           value={time}
-          onChange={e => onChange(`${date}T${e.target.value}`)}
+          onChange={e => update(null, e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
         />

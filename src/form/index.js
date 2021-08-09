@@ -146,15 +146,23 @@ class _Form extends React.Component {
     }
     const field_value = this.props.form_data[field.name]
     const value = field_value === undefined ? (this.props.initial || {})[field.name] : field_value
+    const {name} = field
+    const onChange = React.useCallback(
+      (v) => {
+        this.setField(name, v)
+      },
+    [name]
+    )
+
     return (
       <InputWrapper
         field={field}
         value={value}
-        error={this.errors[field.name]}
+        error={this.errors[name]}
         disabled={this.state.disabled || field.disabled || this.props.disabled}
-        onChange={v => this.setField(field.name, v)}
+        onChange={onChange}
         type_lookup={this.props.type_lookup}
-        onBlur={() => this.props.onBlur && this.props.onBlur(field.name)}
+        onBlur={() => this.props.onBlur && this.props.onBlur(name)}
         {...(field.extra || {})}
       />
     )
