@@ -281,10 +281,9 @@ export const InputTime = props => (
   />
 )
 
-const pad_no = number => number.toString().padStart(2, '0')
-// note that getTimezoneOffset is the opposite way around from normal timezone offsets
-// e.g. BST gives getTimezoneOffset() -> -60
-const display_offset = ofs => `${ofs > 0 ? '-' : '+'}${pad_no(Math.abs(ofs) / 60)}:${pad_no(ofs % 60)}`
+const pad2 = number => Math.abs(number).toString().padStart(2, '0')
+// NOTE: getTimezoneOffset is the opposite way round from normal TZ offsets, e.g. in BST getTimezoneOffset() gives -60
+const display_offset = offset => `${offset > 0 ? '-' : '+'}${pad2(offset / 60)}:${pad2(offset % 60)}`
 
 export const InputDatetime = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => {
   let [date, time] = ['', '']
@@ -299,11 +298,12 @@ export const InputDatetime = ({className, field, error, disabled, value, onChang
     date_ = date_ || date
     time_ = time_ || time
     const ts_string = `${date_}T${time_}`
-    const ts = new Date(Date.parse(ts_string))
-    if (isNaN(ts.getTime())) {
+    const tz_offset = new Date(Date.parse(ts_string)).getTimezoneOffset()
+    if (isNaN(tz_offset)) {
+      // not yet a valid datetime, but we need to update it so the field changes
       onChange(ts_string)
     } else {
-      onChange(ts_string + display_offset(ts.getTimezoneOffset()))
+      onChange(ts_string + display_offset(tz_offset))
     }
   }
 

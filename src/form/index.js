@@ -111,7 +111,8 @@ class _Form extends React.Component {
           errors[k] = e.msg
         }
       }
-      this.setState({disabled: false, errors, form_error: Object.keys(errors).length ? null : 'Error occurred'})
+      const form_error = Object.keys(errors).length ? null : (r.data.message || 'Error occurred')
+      this.setState({disabled: false, errors, form_error})
     } else {
       this.props.afterSubmit && this.props.afterSubmit(r)
       // if the form is still visible, it can be made editable again for future use
