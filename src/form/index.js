@@ -16,12 +16,18 @@ const DefaultFormButtons = ({state, form_props, submitButtonRef}) => (
       {form_props.onCancel ? (
         <Button type="button"
                 color="secondary"
-                disabled={state.disabled}
+                disabled={state.disabled || form_props.disabled}
                 onClick={() => form_props.onCancel()}>
           {form_props.cancel_label || 'Cancel'}
         </Button>
       ) : null}
-      <Button type="submit" color="primary" disabled={state.disabled} className="btn-cog" innerRef={submitButtonRef}>
+      <Button
+        type="submit"
+        color="primary"
+        disabled={state.disabled || form_props.disabled}
+        className="btn-cog"
+        innerRef={submitButtonRef}
+      >
         {form_props.save_label || 'Save'}
         <FontAwesomeIcon icon={faCog} className="cog-loading fa-fw" />
       </Button>

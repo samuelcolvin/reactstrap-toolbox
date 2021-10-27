@@ -92,7 +92,7 @@ export const InputCheckbox = ({className, field, disabled, value, onChange, onBl
   </FormGroup>
 )
 
-function prep_choice (c) {
+export function prep_choice (c) {
   if (typeof c === 'string') {
     c = {value: c}
   }
@@ -181,7 +181,7 @@ export const InputRadio = ({className, field, disabled, error, value, onChange, 
     {field.choices &&
       field.choices.map(prep_choice).map((c, i) => (
         <div key={i} className="custom-control custom-radio">
-          <input
+          <BsInput
             type="radio"
             className="custom-control-input"
             checked={c.value === value}
@@ -461,12 +461,14 @@ const INPUT_LOOKUP = {
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
   const InputComp = (type_lookup && type_lookup[field.type]) || INPUT_LOOKUP[field.type] || InputGeneral
+  const [focused, setFocused] = React.useState(false)
 
   const {focus} = field
   const inputRef = React.createRef()
   React.useEffect(() => {
-    if (focus && inputRef.current) {
+    if (focus && !focused && inputRef.current) {
       inputRef.current.focus()
+      setFocused(true)
     }
   }, [focus, inputRef])
 
