@@ -19,5 +19,6 @@ export {
   InputWrapper,
   InputToggle,
   prep_choice,
+  InvisibleInput,
 } from './form/Input'
 export {Form, StandaloneForm, ModalForm} from './form'
