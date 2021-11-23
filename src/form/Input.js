@@ -47,6 +47,14 @@ const placeholder = field => {
   return null
 }
 
+const not_null_undefined = v => {
+  if (v === null || v === undefined) {
+    return ''
+  } else {
+    return v
+  }
+}
+
 export const InputGeneral = ({className, field, error, disabled, value, onChange, onBlur, custom_type, ...extra}) => (
   <FormGroup className={className || field.className}>
     <InputLabel field={field} />
@@ -62,7 +70,7 @@ export const InputGeneral = ({className, field, error, disabled, value, onChange
       minLength={field.min_length}
       autoComplete={field.autocomplete}
       placeholder={placeholder(field)}
-      value={value || ''}
+      value={not_null_undefined(value)}
       onChange={e => onChange(e.target.value)}
       onBlur={e => onBlur(e.target.value)}
       {...extra}
@@ -368,8 +376,6 @@ export const InputRecaptcha = ({className, field, value, error, onChange}) => {
   )
 }
 
-const ab2base64 = ab => btoa(String.fromCharCode(...new Uint8Array(ab)))
-
 export const InputFile = ({className, field, error, disabled, onChange, value, ...extra}) => {
   const [filename, setFilename] = React.useState(null)
   const [local_error, setError] = React.useState(null)
@@ -383,12 +389,14 @@ export const InputFile = ({className, field, error, disabled, onChange, value, .
     } else {
       setError(null)
       const reader = new FileReader()
-      const f = {name: file.name, last_modified: file.lastModified}
+      reader.onload = () => onChange({
+        name: file.name,
+        last_modified: file.lastModified,
+        content: reader.result,
+      })
       if (field.binary_data) {
-        reader.onload = () => onChange({...f, content: ab2base64(reader.result)})
-        reader.readAsArrayBuffer(file)
+        reader.readAsDataURL(file)
       } else {
-        reader.onload = () => onChange({...f, content: reader.result})
         reader.readAsText(file)
       }
     }
