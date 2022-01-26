@@ -276,7 +276,7 @@ export const InputDate = props => (
 )
 
 const time_placeholder = 'HH:MM'
-const time_pattern = '([01]\\d|2[0-3])-[0-5]\\d'
+const time_pattern = '([01]\\d|2[0-3])[-:.][0-5]\\d'
 
 export const InputTime = props => (
   <InputGeneral
