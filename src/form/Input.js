@@ -280,9 +280,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
   const date_value_format = 'YYYY-MM-DD'
 
-  const [day, setDay] = React.useState('')
-  const [month, setMonth] = React.useState('')
-  const [year, setYear] = React.useState('')
+  const [date, setDate] = React.useState({day: '', month: '', year: ''})
   const [local_error, setError] = React.useState(null)
 
   //console.log('value:', value);
@@ -336,9 +334,8 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
         }
 
         // Update the state
-        setDay(_day)
-        setMonth(_month)
-        setYear(_year)
+        setDate({day: _day, month: _month, year: _year})
+     
       }
 
     }catch(e){
@@ -355,18 +352,18 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
     
   const updateDay = (day_) => {
-    validateValue(`${year}-${month}-${day_}`)
+    validateValue(`${date.year}-${date.month}-${day_}`)
   }
 
   const updateMonth = (month_) => {
-    validateValue(`${year}-${month_}-${day}`)
+    validateValue(`${date.year}-${month_}-${date.day}`)
   }
 
   const updateYear = (year_) => {
-    validateValue(`${year_}-${month}-${day}`)
+    validateValue(`${year_}-${date.month}-${date.day}`)
   }
 
-  const dayInput = (value_) =>{
+  const dayInput = () =>{
     return <>
      <BsInput
           type="text"
@@ -380,7 +377,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-day`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={value_}
+          value={date.day}
           onChange={e => updateDay(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -388,7 +385,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const monthInput = (value_) =>{
+  const monthInput = () =>{
     return <>
      <BsInput
           type="text"
@@ -402,7 +399,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-month`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={value_}
+          value={date.month}
           onChange={e => updateMonth(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -410,7 +407,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const yearInput = (value_) =>{
+  const yearInput = () =>{
     return <>
       <BsInput
           type="text"
@@ -424,7 +421,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-year`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={value_}
+          value={date.year}
           onChange={e => updateYear(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -432,7 +429,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const allInputs = (day_, month_, year_) => {
+  const allInputs = () => {
 
     try{
 
@@ -461,19 +458,19 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
       // Use the index in the array to match the position
       const getInput = (index_, day_, month_, year_) =>{
         if(positions[index_] === day_position)
-          return dayInput(day_)
+          return dayInput()
         if(positions[index_] === month_position)
-          return monthInput(month_)
+          return monthInput()
         if(positions[index_] === year_position)
-          return yearInput(year_)
+          return yearInput()
 
         throw('Error getting date format')  
       }
 
       return <>
-        {getInput(0, day_, month_, year_)}
-        {getInput(1, day_, month_, year_)}
-        {getInput(2, day_, month_, year_)}
+        {getInput(0)}
+        {getInput(1)}
+        {getInput(2)}
       </>
     }
     catch(error){
@@ -481,9 +478,9 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
       // Fallback to basic UK format 
       return <>
-        {dayInput(day_)}<>&nbsp;</>
-        {monthInput(month_)}<>&nbsp;</>
-        {yearInput(year_)}
+        {dayInput(date.day)}
+        {monthInput(date.month)}
+        {yearInput(date.year)}
       </>
     }
   }
@@ -496,7 +493,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     <FormGroup className={className || field.className}>
       <InputLabel field={field} />
       <InputGroup>
-       {allInputs(day, month, year)}
+       {allInputs()}
       </InputGroup>
       {error && <FormFeedback className="d-block">{error}</FormFeedback>}
       <InputHelpText field={field} />
