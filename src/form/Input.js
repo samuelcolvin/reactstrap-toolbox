@@ -278,24 +278,21 @@ export const InputDate = props => (
 
 export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, ...extra}) => {
 
-  const empty_value = '00'
   const date_value_format = 'YYYY-MM-DD'
 
-  const [day, setDay] = React.useState(empty_value);
-  const [month, setMonth] = React.useState(empty_value);
-  const [year, setYear] = React.useState(empty_value);
+  const [day, setDay] = React.useState('')
+  const [month, setMonth] = React.useState('')
+  const [year, setYear] = React.useState('')
   const [local_error, setError] = React.useState(null)
 
-  // console.log('value:', value);
-  // console.log('field:', field);
+  //console.log('value:', value);
 
   React.useEffect(() => {
     if(value){
       validateValue(value)
-    }else if(field.default)
+    }else if(field.default){
       validateValue(field.default)
-    else
-      validateValue(`${empty_value}-${empty_value}-${empty_value}`)
+    }
   },[]);
 
   const validateValue = (value_) =>{
@@ -308,44 +305,43 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
       // Split the date string, allowing the correct number of characters for each part
       const m = value_.match(/(\d{0,4})-(\d{0,2})-(\d{0,2})/)
 
+      console.log('m.length:', m.length);
+
       if (m && m.length > 3) {
 
         // Update the state - allowing for empty values
-        const _day = m[3] === empty_value ? '' : m[3]
-        const _month = m[2] === empty_value ? '' : m[2]
-        const _year = m[1] === empty_value ? '' : m[1]
+        const _day = m[3]
+        const _month = m[2]
+        const _year = m[1]
 
+        // Check that it's a valid date. 
+        const date_string = `${_year}-${pad2(_month)}-${pad2(_day)}`
+        const date = moment(date_string, date_value_format, true);
+
+        console.log('date_string:', date_string);
+
+        if(date.isValid()){
+          if(field.min && date < moment(field.min, date_value_format, true)){
+            _error = `Date must be after ${moment(field.min, date_value_format, true).format('L')}`
+          }else if(date >= moment()){
+            _error = `Date must be before ${moment().format('L')}`
+          }
+          else{
+            // We have a valid value - so update if it's changed
+            if(date_string !== value){
+              onChange(date_string);
+            }
+          }
+        }else{
+          _error = 'Please enter a valid date'
+        }
+
+        // Update the state
         setDay(_day)
         setMonth(_month)
         setYear(_year)
-
-        // Do we have all the values?
-        const entry_complete = _day !== '' && _month !== ''  && _year !== '' 
-
-        if(entry_complete){
-
-          // We have a complete date, use moment to check that it's a valid date. 
-          const date_string = `${_year}-${pad2(_month)}-${pad2(_day)}`
-          const date = moment(date_string, date_value_format, true);
-
-          if(date.isValid()){
-            if(field.min && date < moment(field.min, date_value_format, true)){
-              _error = `Date must be after ${moment(field.min, date_value_format, true).format('L')}`
-            }else if(date >= moment()){
-              _error = `Date must be before ${moment().format('L')}`
-            }
-            else{
-              // We have a valid value - so update if it's changed
-              if(date_string !== value){
-                onChange(date_string);
-              }
-            }
-
-          }else{
-            _error = 'Please enter a valid date'
-          }
-        }
       }
+
     }catch(e){
         console.log(error);
         _error = e.message
@@ -358,20 +354,17 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     setError(_error);  
   } 
 
-  const valueOrEmpty = (value_) =>{
-      return value_ === '' || value_ === null || value === undefined ? empty_value : value_
-  }
     
   const updateDay = (day_) => {
-    validateValue(`${valueOrEmpty(year)}-${valueOrEmpty(month)}-${valueOrEmpty(day_)}`)
+    validateValue(`${year}-${month}-${day_}`)
   }
 
   const updateMonth = (month_) => {
-    validateValue(`${valueOrEmpty(year)}-${valueOrEmpty(month_)}-${valueOrEmpty(day)}`)
+    validateValue(`${year}-${month_}-${day}`)
   }
 
   const updateYear = (year_) => {
-    validateValue(`${valueOrEmpty(year_)}-${valueOrEmpty(month)}-${valueOrEmpty(day)}`)
+    validateValue(`${year_}-${month}-${day}`)
   }
 
   const dayInput = (value_) =>{
