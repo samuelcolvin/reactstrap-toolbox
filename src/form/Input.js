@@ -276,7 +276,7 @@ export const InputDate = props => (
   />
 )
 
-export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, ...extra}) => {
+export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, input_format, ...extra}) => {
 
   const empty_value = '00'
   const date_value_format = 'YYYY-MM-DD'
@@ -289,7 +289,9 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
   console.log('value:', value);
 
   React.useEffect(() => {
-    if(field.default)
+    if(value){
+      validateValue(value)
+    }else if(field.default)
       validateValue(field.default)
     else
       validateValue(`${empty_value}-${empty_value}-${empty_value}`)
@@ -332,8 +334,10 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
               _error = `Date must be before ${moment().format('L')}`
             }
             else{
-              // We have a valid value - so update
-              onChange(date_string);
+              // We have a valid value - so update if it's changed
+              if(date_string !== value){
+                onChange(date_string);
+              }
             }
 
           }else{
@@ -438,8 +442,10 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
     try{
       // Get the locale date format
-      const date_format = moment.localeData().longDateFormat('L')
-
+      if(date_format === null){
+        date_format = moment.localeData().longDateFormat('L')
+      }
+       
       // Find each of the d, m and y positions.  
       const day_position = date_format.toLowerCase().indexOf('d')
       const month_position = date_format.toLowerCase().indexOf('m')
@@ -476,8 +482,8 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
       // Fallback to basic UK format 
       return <>
-        {dayInput(day_)}
-        {monthInput(month_)}
+        {dayInput(day_)}<>&nbsp;</>
+        {monthInput(month_)}<>&nbsp;</>
         {yearInput(year_)}
       </>
     }
