@@ -309,7 +309,6 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
       if (m && m.length > 3) {
 
-        // Update the state - allowing for empty values
         const _day = m[3]
         const _month = m[2]
         const _year = m[1]
