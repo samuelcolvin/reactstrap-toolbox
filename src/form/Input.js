@@ -276,7 +276,7 @@ export const InputDate = props => (
   />
 )
 
-export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, input_format, ...extra}) => {
+export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, ...extra}) => {
 
   const empty_value = '00'
   const date_value_format = 'YYYY-MM-DD'
@@ -286,7 +286,8 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
   const [year, setYear] = React.useState(empty_value);
   const [local_error, setError] = React.useState(null)
 
-  console.log('value:', value);
+  // console.log('value:', value);
+  // console.log('field:', field);
 
   React.useEffect(() => {
     if(value){
@@ -356,20 +357,21 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
     setError(_error);  
   } 
+
+  const valueOrEmpty = (value_) =>{
+      return value_ === '' || value_ === null || value === undefined ? empty_value : value_
+  }
     
   const updateDay = (day_) => {
-    day_ = day_ !== null ? day_ : empty_value
-    validateValue(`${year}-${month}-${day_}`)
+    validateValue(`${valueOrEmpty(year)}-${valueOrEmpty(month)}-${valueOrEmpty(day_)}`)
   }
 
   const updateMonth = (month_) => {
-    month_ = month_ !== null ? month_ : empty_value
-    validateValue(`${year}-${month_}-${day}`)
+    validateValue(`${valueOrEmpty(year)}-${valueOrEmpty(month_)}-${valueOrEmpty(day)}`)
   }
 
   const updateYear = (year_) => {
-    year_ = year_ !== null ? year_ : empty_value
-    validateValue(`${year_}-${month}-${day}`)
+    validateValue(`${valueOrEmpty(year_)}-${valueOrEmpty(month)}-${valueOrEmpty(day)}`)
   }
 
   const dayInput = (value_) =>{
@@ -441,9 +443,14 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
   const allInputs = (day_, month_, year_) => {
 
     try{
+
+      var date_format = ''
+
       // Get the locale date format
-      if(date_format === null){
+      if(field.input_format === null || field.input_format === undefined){
         date_format = moment.localeData().longDateFormat('L')
+      }else{
+        date_format = field.input_format 
       }
        
       // Find each of the d, m and y positions.  
