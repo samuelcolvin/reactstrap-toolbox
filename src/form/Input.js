@@ -278,76 +278,103 @@ export const InputDate = props => (
 
 export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, ...extra}) => {
 
-  let [day, month, year] = ['', '', '']
-  const empty_value = '??'
+  const empty_value = '00'
+  const date_value_format = 'YYYY-MM-DD'
+
+  const [day, setDay] = React.useState(empty_value);
+  const [month, setMonth] = React.useState(empty_value);
+  const [year, setYear] = React.useState(empty_value);
+  const [local_error, setError] = React.useState(null)
 
   console.log('value:', value);
-  console.log('field:', field);
 
-  if (value) {
+  React.useEffect(() => {
+    if(field.default)
+      validateValue(field.default)
+    else
+      validateValue(`${empty_value}-${empty_value}-${empty_value}`)
+  },[]);
+
+  const validateValue = (value_) =>{
+
+    console.log('validateValue:', value_);
+
+    var _error = null
+
     try{
       // Split the date string, allowing the correct number of characters for each part
-      const m = value.match(/(\d{0,4})-(\d{0,2})-(\d{0,2})/)
-      if (m) {
+      const m = value_.match(/(\d{0,4})-(\d{0,2})-(\d{0,2})/)
 
-        [, year, month, day] = m
-        day = day === empty_value ? '' : day
-        month = month === empty_value ? '' : month
-        year = year === empty_value ? '' : year
+      if (m && m.length > 3) {
+
+        // Update the state - allowing for empty values
+        const _day = m[3] === empty_value ? '' : m[3]
+        const _month = m[2] === empty_value ? '' : m[2]
+        const _year = m[1] === empty_value ? '' : m[1]
+
+        setDay(_day)
+        setMonth(_month)
+        setYear(_year)
 
         // Do we have all the values?
-        const entry_complete = day !== '' && month !== ''  && year !== '' 
+        const entry_complete = _day !== '' && _month !== ''  && _year !== '' 
 
         if(entry_complete){
-          // We have a complete date, use moment to check that it's a valid date. 
-          const date_string = `${year}-${pad2(month)}-${pad2(day)}`
-          var date = moment(date_string, 'YYYY-MM-DD', true);
 
-          console.log('date_string:', date_string)
-          console.log('moment date:', date);
+          // We have a complete date, use moment to check that it's a valid date. 
+          const date_string = `${_year}-${pad2(_month)}-${pad2(_day)}`
+          const date = moment(date_string, date_value_format, true);
 
           if(date.isValid()){
-
-            if(field.min && date < moment(field.min, 'YYYY-MM-DD', true)){
-              error = `Date must be after ${moment(field.min, 'YYYY-MM-DD', true).format('L')}`
+            if(field.min && date < moment(field.min, date_value_format, true)){
+              _error = `Date must be after ${moment(field.min, date_value_format, true).format('L')}`
             }else if(date >= moment()){
-              error = `Date must be before ${moment().format('L')}`
+              _error = `Date must be before ${moment().format('L')}`
             }
             else{
-              error = null;
+              // We have a valid value - so update
+              onChange(date_string);
             }
 
           }else{
-            error = 'Please enter a valid date'
+            _error = 'Please enter a valid date'
           }
         }
       }
     }catch(e){
         console.log(error);
-        error = e.message
+        _error = e.message
     }
-  }
+
+    // Reset the value on a local error
+    if(_error)
+      onChange(undefined)
+
+    setError(_error);  
+  } 
     
   const updateDay = (day_) => {
     day_ = day_ !== null ? day_ : empty_value
-    onChange(`${year}-${month}-${day_}`)
+    validateValue(`${year}-${month}-${day_}`)
   }
 
   const updateMonth = (month_) => {
     month_ = month_ !== null ? month_ : empty_value
-    onChange(`${year}-${month_}-${day}`)
+    validateValue(`${year}-${month_}-${day}`)
   }
 
   const updateYear = (year_) => {
     year_ = year_ !== null ? year_ : empty_value
-    onChange(`${year_}-${month}-${day}`)
+    validateValue(`${year_}-${month}-${day}`)
   }
 
-  const dayInput = () =>{
+  const dayInput = (value_) =>{
     return <>
      <BsInput
           type="text"
           placeholder={"DD"}
+          pattern="^(0?[1-9]|[1-2][0-9]|3[0-1])$"
+          title="Valid day between 1 and 31"
           className={field.inputClassName}
           invalid={!!error}
           disabled={disabled}
@@ -355,7 +382,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-day`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={day}
+          value={value_}
           onChange={e => updateDay(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -363,11 +390,13 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const monthInput = () =>{
+  const monthInput = (value_) =>{
     return <>
      <BsInput
           type="text"
           placeholder={"MM"}
+          pattern="^(0?[1-9]|1[012])$"
+          title="Valid month between 1 and 12"
           className={field.inputClassName}
           invalid={!!error}
           disabled={disabled}
@@ -375,7 +404,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-month`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={month}
+          value={value_}
           onChange={e => updateMonth(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -383,11 +412,13 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const yearInput = () =>{
+  const yearInput = (value_) =>{
     return <>
       <BsInput
           type="text"
           placeholder={"YYYY"}
+          pattern="^\d{4}$"
+          title="Valid year"
           className={field.inputClassName}
           invalid={!!error}
           disabled={disabled}
@@ -395,7 +426,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
           id={`${field.name}-year`}
           required={field.required}
           autoComplete={field.autocomplete}
-          value={year}
+          value={value_}
           onChange={e => updateYear(e.target.value)}
           onBlur={e => onBlur(e.target.value)}
           {...extra}
@@ -403,7 +434,7 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
     </>
   }
 
-  const allInputs = () => {
+  const allInputs = (day_, month_, year_) => {
 
     try{
       // Get the locale date format
@@ -423,21 +454,21 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
       positions.sort()
 
       // Use the index in the array to match the position
-      const getInput = (index) =>{
-        if(positions[index] === day_position)
-          return dayInput()
-        if(positions[index] === month_position)
-          return monthInput()
-        if(positions[index] === year_position)
-          return yearInput()
+      const getInput = (index_, day_, month_, year_) =>{
+        if(positions[index_] === day_position)
+          return dayInput(day_)
+        if(positions[index_] === month_position)
+          return monthInput(month_)
+        if(positions[index_] === year_position)
+          return yearInput(year_)
 
         throw('Error getting date format')  
       }
 
       return <>
-        {getInput(0)}
-        {getInput(1)}
-        {getInput(2)}
+        {getInput(0, day_, month_, year_)}
+        {getInput(1, day_, month_, year_)}
+        {getInput(2, day_, month_, year_)}
       </>
     }
     catch(error){
@@ -445,18 +476,22 @@ export const InputDob = ({className, field, error, disabled, value, onChange, on
 
       // Fallback to basic UK format 
       return <>
-        {dayInput()}
-        {monthInput()}
-        {yearInput()}
+        {dayInput(day_)}
+        {monthInput(month_)}
+        {yearInput(year_)}
       </>
     }
+  }
+
+  if (local_error) {
+      error = local_error
   }
 
   return (
     <FormGroup className={className || field.className}>
       <InputLabel field={field} />
       <InputGroup>
-       {allInputs()}
+       {allInputs(day, month, year)}
       </InputGroup>
       {error && <FormFeedback className="d-block">{error}</FormFeedback>}
       <InputHelpText field={field} />
