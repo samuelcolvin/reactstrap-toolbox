@@ -12,6 +12,7 @@ import {
 } from 'reactstrap'
 import {as_title} from '../utils'
 import {Recaptcha} from '../Recaptcha'
+import moment from 'moment'
 
 export const InputLabel = ({field, children}) =>
   field.show_label !== false ? (
@@ -275,6 +276,231 @@ export const InputDate = props => (
   />
 )
 
+export const InputDob = ({className, field, error, disabled, value, onChange, onBlur, ...extra}) => {
+
+  const date_value_format = 'YYYY-MM-DD'
+
+  const [date, setDate] = React.useState({day: '', month: '', year: ''})
+  const [local_error, setError] = React.useState(null)
+
+  //console.log('value:', value);
+
+  React.useEffect(() => {
+    if(value){
+      validateValue(value)
+    }else if(field.default){
+      validateValue(field.default)
+    }
+  },[]);
+
+  const validateValue = (value_) =>{
+
+    console.log('validateValue:', value_);
+
+    var _error = null
+
+    try{
+      // Split the date string, allowing the correct number of characters for each part
+      const m = value_.match(/(\d{0,4})-(\d{0,2})-(\d{0,2})/)
+
+      console.log('m.length:', m.length);
+
+      if (m && m.length > 3) {
+
+        const _day = m[3]
+        const _month = m[2]
+        const _year = m[1]
+
+        // Check that it's a valid date. 
+        const date_string = `${_year}-${pad2(_month)}-${pad2(_day)}`
+        const date = moment(date_string, date_value_format, true);
+
+        console.log('date_string:', date_string);
+
+        if(date.isValid()){
+          if(field.min && date < moment(field.min, date_value_format, true)){
+            _error = `Date must be after ${moment(field.min, date_value_format, true).format('L')}`
+          }else if(date >= moment()){
+            _error = `Date must be before ${moment().format('L')}`
+          }
+          else{
+            // We have a valid value - so update if it's changed
+            if(date_string !== value){
+              onChange(date_string);
+            }
+          }
+        }else{
+          _error = 'Please enter a valid date'
+        }
+
+        // Update the state
+        setDate({day: _day, month: _month, year: _year})
+     
+      }
+
+    }catch(e){
+        console.log(error);
+        _error = e.message
+    }
+
+    // Reset the value on a local error
+    if(_error)
+      onChange(undefined)
+
+    setError(_error);  
+  } 
+
+    
+  const updateDay = (day_) => {
+    validateValue(`${date.year}-${date.month}-${day_}`)
+  }
+
+  const updateMonth = (month_) => {
+    validateValue(`${date.year}-${month_}-${date.day}`)
+  }
+
+  const updateYear = (year_) => {
+    validateValue(`${year_}-${date.month}-${date.day}`)
+  }
+
+  const dayInput = () =>{
+    return <>
+     <BsInput
+          type="text"
+          placeholder={"DD"}
+          pattern="^(0?[1-9]|[1-2][0-9]|3[0-1])$"
+          title="Valid day between 1 and 31"
+          className={field.inputClassName}
+          invalid={!!error}
+          disabled={disabled}
+          name={`${field.name}-day`}
+          id={`${field.name}-day`}
+          required={field.required}
+          autoComplete={field.autocomplete}
+          value={date.day}
+          onChange={e => updateDay(e.target.value)}
+          onBlur={e => onBlur(e.target.value)}
+          {...extra}
+        />
+    </>
+  }
+
+  const monthInput = () =>{
+    return <>
+     <BsInput
+          type="text"
+          placeholder={"MM"}
+          pattern="^(0?[1-9]|1[012])$"
+          title="Valid month between 1 and 12"
+          className={field.inputClassName}
+          invalid={!!error}
+          disabled={disabled}
+          name={`${field.name}-month`}
+          id={`${field.name}-month`}
+          required={field.required}
+          autoComplete={field.autocomplete}
+          value={date.month}
+          onChange={e => updateMonth(e.target.value)}
+          onBlur={e => onBlur(e.target.value)}
+          {...extra}
+        />
+    </>
+  }
+
+  const yearInput = () =>{
+    return <>
+      <BsInput
+          type="text"
+          placeholder={"YYYY"}
+          pattern="^\d{4}$"
+          title="Valid year"
+          className={field.inputClassName}
+          invalid={!!error}
+          disabled={disabled}
+          name={`${field.name}-year`}
+          id={`${field.name}-year`}
+          required={field.required}
+          autoComplete={field.autocomplete}
+          value={date.year}
+          onChange={e => updateYear(e.target.value)}
+          onBlur={e => onBlur(e.target.value)}
+          {...extra}
+        />
+    </>
+  }
+
+  const allInputs = () => {
+
+    try{
+
+      var date_format = ''
+
+      // Get the locale date format
+      if(field.input_format === null || field.input_format === undefined){
+        date_format = moment.localeData().longDateFormat('L')
+      }else{
+        date_format = field.input_format 
+      }
+       
+      // Find each of the d, m and y positions.  
+      const day_position = date_format.toLowerCase().indexOf('d')
+      const month_position = date_format.toLowerCase().indexOf('m')
+      const year_position = date_format.toLowerCase().indexOf('y')
+
+      console.assert(day_position !== -1, 'day_position not found')
+      console.assert(month_position !== -1, 'month_position not found')
+      console.assert(year_position !== -1, 'year_position not found')
+      
+      // Add to and array and sort
+      var positions = [day_position, month_position, year_position]
+      positions.sort()
+
+      // Use the index in the array to match the position
+      const getInput = (index_, day_, month_, year_) =>{
+        if(positions[index_] === day_position)
+          return dayInput()
+        if(positions[index_] === month_position)
+          return monthInput()
+        if(positions[index_] === year_position)
+          return yearInput()
+
+        throw('Error getting date format')  
+      }
+
+      return <>
+        {getInput(0)}
+        {getInput(1)}
+        {getInput(2)}
+      </>
+    }
+    catch(error){
+      console.log(error)
+
+      // Fallback to basic UK format 
+      return <>
+        {dayInput(date.day)}
+        {monthInput(date.month)}
+        {yearInput(date.year)}
+      </>
+    }
+  }
+
+  if (local_error) {
+      error = local_error
+  }
+
+  return (
+    <FormGroup className={className || field.className}>
+      <InputLabel field={field} />
+      <InputGroup>
+       {allInputs()}
+      </InputGroup>
+      {error && <FormFeedback className="d-block">{error}</FormFeedback>}
+      <InputHelpText field={field} />
+    </FormGroup>
+  )
+}
+
 const time_placeholder = 'HH:MM'
 const time_pattern = '([01]\\d|2[0-3])[-:.][0-5]\\d'
 
@@ -465,6 +691,7 @@ const INPUT_LOOKUP = {
   recaptcha: InputRecaptcha,
   file: InputFile,
   hidden: HiddenInput,
+  dob: InputDob,
 }
 
 export const InputWrapper = ({field, value, type_lookup, ...props}) => {
